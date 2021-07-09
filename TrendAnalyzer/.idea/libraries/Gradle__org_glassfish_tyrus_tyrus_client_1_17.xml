@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Gradle: org.glassfish.tyrus:tyrus-client:1.17">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.glassfish.tyrus/tyrus-client/1.17/76c82969cf51d806d5e3092cc867129a4ac368/tyrus-client-1.17.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.glassfish.tyrus/tyrus-client/1.17/b6587e566beefc83dace7f080412f9cc79300bd/tyrus-client-1.17-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.glassfish.tyrus/tyrus-client/1.17/141e618b32054bc69cd0c5575187e268daa055ed/tyrus-client-1.17-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

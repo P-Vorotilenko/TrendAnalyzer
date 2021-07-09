@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AppThemeActionBar" parent="Theme.MaterialComponents.DayNight">
+        <item name="actionBarStyle">@style/Custom.ActionBar</item>
+    </style>
+    <style name="Custom.ActionBar" parent="Widget.MaterialComponents.Light.ActionBar.Solid">
+        <item name="background">@color/chartBackgroundColor</item>
+    </style>
+</resources>

@@ -1,7 +1,7 @@
 package vorotilenko.trendanalyzerserver.clients.binance;
 
 /**
- * Trading info aggregated for 1 order (for parsing Binance messages)
+ * Trading info aggregated for 1 order (for parsing Binance JSON messages)
  * */
 public class AggregateTradeInfo {
     /**

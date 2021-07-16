@@ -78,14 +78,16 @@ public class BinanceClient extends ExchangeClient {
     @OnMessage
     public void onMessage(String message, Session session) {
         // Parsing JSON
-        AggregateTradeInfo aggTradeInfo = gson.fromJson(message, AggregateTradeInfo.class);
+        CombinedMessage combinedMessage = gson.fromJson(message, CombinedMessage.class);
+        String symbol = combinedMessage.data.s;
+        long time = combinedMessage.data.T;
+        double price = combinedMessage.data.p;
         // Sending data to the DB
-        databaseSender.putData(aggTradeInfo.s, aggTradeInfo.T, aggTradeInfo.p);
-        // Sending data to the listeners
-        notifyTradeInfoListeners(new TradeInfo(aggTradeInfo.s, aggTradeInfo.T,
-                aggTradeInfo.p, ExchangeNames.BINANCE));
-//        logger.info("Binance:\n" + message +
-//                "\nCurrent BTC price: " + aggTradeInfo.p + "$");
+        databaseSender.putData(symbol, time, price);
+        // Sending data to listeners
+        notifyTradeInfoListeners(new TradeInfo(symbol, time, price, ExchangeNames.BINANCE));
+
+        logger.info("Binance:\n" + message);
     }
 
     /**
@@ -123,7 +125,10 @@ public class BinanceClient extends ExchangeClient {
         try {
             ClientManager client = ClientManager.createClient();
             client.connectToServer(instance,
-                    new URI("wss://stream.binance.com:9443/ws/btcusdt@aggTrade"));
+                    new URI("wss://stream.binance.com:9443/stream?streams=" +
+                            "btcusdt@aggTrade/ethusdt@aggTrade/adausdt@aggTrade/xrpusdt@aggTrade/" +
+                            "dotusdt@aggTrade/uniusdt@aggTrade/bchusdt@aggTrade/ltcusdt@aggTrade/" +
+                            "solusdt@aggTrade/linkusdt@aggTrade"));
         } catch (DeploymentException | URISyntaxException | IOException e) {
             throw new RuntimeException(e);
         }

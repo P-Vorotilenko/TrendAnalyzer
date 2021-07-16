@@ -10,7 +10,7 @@ public class TradeDataAccumulator {
     /**
      * The default number of datasets after which the submission occurs
      */
-    private static final int DEFAULT_MAX_DATA_SETS_NUM = 10;
+    private static final int DEFAULT_MAX_DATASETS_NUM = 50;
 
     /**
      * The sending data to the DB thread
@@ -40,7 +40,7 @@ public class TradeDataAccumulator {
      * @param batchSender BatchSender for sending data to the DB as BATCH requests
      */
     public TradeDataAccumulator(BatchSender batchSender) {
-        maxDatasetsNum = DEFAULT_MAX_DATA_SETS_NUM;
+        maxDatasetsNum = DEFAULT_MAX_DATASETS_NUM;
         dataSets = new Object[maxDatasetsNum];
 
         sender = new AsyncDataSender(batchSender);
@@ -67,14 +67,13 @@ public class TradeDataAccumulator {
      * @param data An object containing data to be sent to the DB
      */
     public void add(Object data) {
-        dataSets[currDatasetsNum] = data;
-        currDatasetsNum++;
+        dataSets[currDatasetsNum++] = data;
         if (currDatasetsNum == maxDatasetsNum) {
             try {
                 sender.sendData(dataSets);
             } catch (NullPointerException e) {
                 logger.info("An error occurred while sending data " +
-                        "to the AutoTrader DB.");
+                        "to the TrendAnalyzer DB.");
                 e.printStackTrace();
             }
             currDatasetsNum = 0;

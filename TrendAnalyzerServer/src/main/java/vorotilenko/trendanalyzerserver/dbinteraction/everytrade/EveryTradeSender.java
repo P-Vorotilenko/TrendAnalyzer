@@ -20,6 +20,11 @@ public class EveryTradeSender extends DatabaseSender {
         tradeDataAccumulator = new TradeDataAccumulator(new EveryTradeBatchSender());
     }
 
+    public EveryTradeSender(short exchangeId) throws SQLException {
+        super(exchangeId);
+        tradeDataAccumulator = new TradeDataAccumulator(new EveryTradeBatchSender());
+    }
+
     /**
      * {@inheritDoc}
      */

@@ -22,22 +22,17 @@ public abstract class DatabaseSender {
     protected final short exchangeId;
 
     public DatabaseSender(String exchangeName) throws SQLException {
-        // Getting the exchange ID
-        Connection dbConnection = DBConnection.getNewConnection();
-        String exchangeIdQuery = "SELECT Id FROM exchanges WHERE Exchange = ?";
-        PreparedStatement pStatement = dbConnection.prepareStatement(exchangeIdQuery);
-        pStatement.setString(1, exchangeName);
-        ResultSet resultSet = pStatement.executeQuery();
-        if (resultSet.next()) {
-            exchangeId = resultSet.getShort(1);
-            pStatement.close();
-            dbConnection.close();
-        } else {
-            pStatement.close();
-            dbConnection.close();
+        short id = DBInteraction.getExchangeID(exchangeName);
+        if (id != -1)
+            exchangeId = id;
+        else {
             throw new RuntimeException(
-                    String.format("The exchange with name \"%s\" was not found.", exchangeName));
+                    String.format("Exchange %s was not found in the DB", exchangeName));
         }
+    }
+
+    public DatabaseSender(short exchangeId) {
+        this.exchangeId = exchangeId;
     }
 
     /**

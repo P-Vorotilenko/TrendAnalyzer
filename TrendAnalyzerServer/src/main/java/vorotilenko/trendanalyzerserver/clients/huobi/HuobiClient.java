@@ -7,6 +7,7 @@ import vorotilenko.trendanalyzerserver.ExchangeNames;
 import vorotilenko.trendanalyzerserver.Symbols;
 import vorotilenko.trendanalyzerserver.clients.ExchangeClient;
 import vorotilenko.trendanalyzerserver.clients.TradeInfo;
+import vorotilenko.trendanalyzerserver.dbinteraction.DBInteraction;
 import vorotilenko.trendanalyzerserver.dbinteraction.DatabaseSender;
 import vorotilenko.trendanalyzerserver.dbinteraction.everytrade.EveryTradeSender;
 
@@ -44,11 +45,11 @@ public class HuobiClient extends ExchangeClient {
      * Subscribes to updates by the specified symbol
      * @param symbol Symbol which has to be observed
      */
-    private void subscToUpdates(String symbol) {
+    private void subscToUpdates(String symbol, short huobiId) {
         MarketClient marketClient = MarketClient.create(new HuobiOptions());
         final DatabaseSender sender;
         try {
-            sender = new EveryTradeSender(ExchangeNames.HUOBI);
+            sender = new EveryTradeSender(huobiId);
         } catch (SQLException e) {
             e.printStackTrace();
             return;
@@ -75,16 +76,21 @@ public class HuobiClient extends ExchangeClient {
      * Runs the client
      */
     private void start() {
-        subscToUpdates(Symbols.BTCUSDT);
-        subscToUpdates(Symbols.ETHUSDT);
-        subscToUpdates(Symbols.ADAUSDT);
-        subscToUpdates(Symbols.XRPUSDT);
-        subscToUpdates(Symbols.DOTUSDT);
-        subscToUpdates(Symbols.UNIUSDT);
-        subscToUpdates(Symbols.BCHUSDT);
-        subscToUpdates(Symbols.LTCUSDT);
-        subscToUpdates(Symbols.SOLUSDT);
-        subscToUpdates(Symbols.LINKUSDT);
+        short huobiId = DBInteraction.getExchangeID(ExchangeNames.HUOBI);
+        if (huobiId == -1) {
+            throw new RuntimeException(String.format(
+                    "Exchange %s was not found in the DB", ExchangeNames.HUOBI));
+        }
+        subscToUpdates(Symbols.BTCUSDT, huobiId);
+        subscToUpdates(Symbols.ETHUSDT, huobiId);
+        subscToUpdates(Symbols.ADAUSDT, huobiId);
+        subscToUpdates(Symbols.XRPUSDT, huobiId);
+        subscToUpdates(Symbols.DOTUSDT, huobiId);
+        subscToUpdates(Symbols.UNIUSDT, huobiId);
+        subscToUpdates(Symbols.BCHUSDT, huobiId);
+        subscToUpdates(Symbols.LTCUSDT, huobiId);
+        subscToUpdates(Symbols.SOLUSDT, huobiId);
+        subscToUpdates(Symbols.LINKUSDT, huobiId);
     }
 
     @Override

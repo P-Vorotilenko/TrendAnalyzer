@@ -1,13 +1,14 @@
 package vorotilenko.trendanalyzerserver.dbinteraction;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
-import static vorotilenko.trendanalyzerserver.dbinteraction.DBConnection.getNewConnection;
 
 /**
  * Class for interacting with the DB
@@ -58,7 +59,7 @@ public class DBInteraction {
                     isCleaning = true;
                     clearDB();
                     executor.scheduleAtFixedRate(() -> {
-                        try (Connection connection = getNewConnection();
+                        try (Connection connection = DBConnection.getNewConnection();
                              PreparedStatement pStatement =
                                      connection.prepareStatement(DELETE_OLD_RECORDS_QUERY)) {
 
@@ -71,5 +72,30 @@ public class DBInteraction {
                 }
             }
         }
+    }
+
+    /**
+     * @param exchangeName Name of the exchange
+     * @return ID of the exchange or -1 if the exchange was not found
+     */
+    public static short getExchangeID(String exchangeName) {
+        boolean idFound = false;
+        short exchangeId = -1;
+        String exchangeIdQuery = "SELECT Id FROM exchanges WHERE Exchange = ?";
+        try (Connection dbConnection = DBConnection.getNewConnection();
+             PreparedStatement pStatement = dbConnection.prepareStatement(exchangeIdQuery)) {
+
+            pStatement.setString(1, exchangeName);
+            ResultSet resultSet = pStatement.executeQuery();
+            if (resultSet.next()) {
+                exchangeId = resultSet.getShort(1);
+                idFound = true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return -1;
+        }
+        if (idFound) return exchangeId;
+        else return -1;
     }
 }

@@ -36,7 +36,7 @@ public abstract class DatabaseSender {
             pStatement.close();
             dbConnection.close();
             throw new RuntimeException(
-                    String.format("The exchange with name \"%s\" hasn't been found.", exchangeName));
+                    String.format("The exchange with name \"%s\" was not found.", exchangeName));
         }
     }
 

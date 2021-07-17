@@ -87,7 +87,7 @@ public class BinanceClient extends ExchangeClient {
         // Sending data to listeners
         notifyTradeInfoListeners(new TradeInfo(symbol, time, price, ExchangeNames.BINANCE));
 
-        logger.info("Binance:\n" + message);
+        //logger.info("Binance:\n" + message);
     }
 
     /**

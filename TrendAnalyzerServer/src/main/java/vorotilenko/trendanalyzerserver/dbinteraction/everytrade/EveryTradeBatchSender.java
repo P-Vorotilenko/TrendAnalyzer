@@ -36,7 +36,7 @@ public class EveryTradeBatchSender implements BatchSender {
     public void sendBatch(Object[] data, Connection dbConnection) {
         if (data != null) {
             try (PreparedStatement pStatement = dbConnection.prepareStatement(INSERT_QUERY)) {
-                for (Object entry: data) {
+                for (Object entry : data) {
                     TradeData tradeData = (TradeData) entry;
                     pStatement.setString(1, tradeData.getSymbol());
                     pStatement.setLong(2, tradeData.getTradeTimeMillis());

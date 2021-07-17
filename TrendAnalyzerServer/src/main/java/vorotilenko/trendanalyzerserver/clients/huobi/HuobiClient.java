@@ -18,13 +18,9 @@ public class HuobiClient extends ExchangeClient {
     /**
      * Instance for Standalone pattern
      */
-    private static final HuobiClient instance = new HuobiClient();;
+    private static final HuobiClient instance = new HuobiClient();
     static {
-        try {
-            instance.start(new EveryTradeSender(ExchangeNames.HUOBI));
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        instance.start();
     }
 
     /**
@@ -45,26 +41,50 @@ public class HuobiClient extends ExchangeClient {
     }
 
     /**
-     * Runs the client
+     * Subscribes to updates by the specified symbol
+     * @param symbol Symbol which has to be observed
      */
-    private void start(DatabaseSender sender) {
+    private void subscToUpdates(String symbol) {
         MarketClient marketClient = MarketClient.create(new HuobiOptions());
-        final String symbol = Symbols.BTCUSDT;
+        final DatabaseSender sender;
+        try {
+            sender = new EveryTradeSender(ExchangeNames.HUOBI);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return;
+        }
         marketClient.subMarketTrade(
                 SubMarketTradeRequest.builder().symbol(symbol.toLowerCase()).build(),
                 (marketTradeEvent) -> {
 
-            marketTradeEvent.getList().forEach(marketTrade -> {
-                long timestamp = marketTrade.getTs();
-                double price = marketTrade.getPrice().doubleValue();
-                // Sending data to the DB
-                sender.putData(symbol, timestamp, price);
-                // Sending data to listeners
-                TradeInfo tradeInfo = new TradeInfo(symbol, timestamp, price, ExchangeNames.HUOBI);
-                notifyTradeInfoListeners(tradeInfo);
-                //logger.info("Huobi:\n" + marketTrade);
-            });
-        });
+                    marketTradeEvent.getList().forEach(marketTrade -> {
+                        long timestamp = marketTrade.getTs();
+                        double price = marketTrade.getPrice().doubleValue();
+                        // Sending data to the DB
+                        sender.putData(symbol, timestamp, price);
+                        // Sending data to listeners
+                        TradeInfo tradeInfo =
+                                new TradeInfo(symbol, timestamp, price, ExchangeNames.HUOBI);
+                        notifyTradeInfoListeners(tradeInfo);
+                        //logger.info("Huobi:\n" + marketTrade);
+                    });
+                });
+    }
+
+    /**
+     * Runs the client
+     */
+    private void start() {
+        subscToUpdates(Symbols.BTCUSDT);
+        subscToUpdates(Symbols.ETHUSDT);
+        subscToUpdates(Symbols.ADAUSDT);
+        subscToUpdates(Symbols.XRPUSDT);
+        subscToUpdates(Symbols.DOTUSDT);
+        subscToUpdates(Symbols.UNIUSDT);
+        subscToUpdates(Symbols.BCHUSDT);
+        subscToUpdates(Symbols.LTCUSDT);
+        subscToUpdates(Symbols.SOLUSDT);
+        subscToUpdates(Symbols.LINKUSDT);
     }
 
     @Override

@@ -65,12 +65,6 @@ public abstract class ExchangeClient implements TradeInfoProvider {
     @Override
     public void finalize() throws Throwable {
         executorService.shutdownNow();
-        while (true) {
-            try {
-                if (executorService.awaitTermination(5, TimeUnit.SECONDS))
-                    break;
-            } catch (InterruptedException ignored) {}
-        }
         super.finalize();
     }
 }

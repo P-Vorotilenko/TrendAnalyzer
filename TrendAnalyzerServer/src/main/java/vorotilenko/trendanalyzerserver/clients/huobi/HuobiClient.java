@@ -49,7 +49,7 @@ public class HuobiClient extends ExchangeClient {
         MarketClient marketClient = MarketClient.create(new HuobiOptions());
         final DatabaseSender sender;
         try {
-            sender = new EveryTradeSender(huobiId);
+            sender = new EveryTradeSender(huobiId, 20);
         } catch (SQLException e) {
             e.printStackTrace();
             return;

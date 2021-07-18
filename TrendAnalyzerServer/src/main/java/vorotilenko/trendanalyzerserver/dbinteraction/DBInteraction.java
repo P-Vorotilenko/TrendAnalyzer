@@ -26,7 +26,7 @@ public class DBInteraction {
             "DELETE FROM tradeInfo WHERE (? - TradeTimeMillis) > 600000;";
 
     /**
-     * An object that performs work with a certain frequency
+     * Executor for cleaning DB
      */
     private static final ScheduledExecutorService executor =
             Executors.newSingleThreadScheduledExecutor();

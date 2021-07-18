@@ -1,7 +1,7 @@
 package vorotilenko.trendanalyzerserver.dbinteraction.candle;
 
 import vorotilenko.trendanalyzerserver.dbinteraction.DatabaseSender;
-import vorotilenko.trendanalyzerserver.dbinteraction.TradeDataAccumulator;
+import vorotilenko.trendanalyzerserver.dbinteraction.TradesAccumulator;
 
 import java.sql.*;
 
@@ -14,7 +14,7 @@ public class CandleMaker extends DatabaseSender {
     /**
      * Object for sending data to the DB
      */
-    private final TradeDataAccumulator tradeDataAccumulator;
+    private final TradesAccumulator tradesAccumulator;
 
     /**
      * Current trading minute
@@ -44,7 +44,7 @@ public class CandleMaker extends DatabaseSender {
     public CandleMaker(String exchangeName) throws SQLException {
         super(exchangeName);
         // Creating TradeDataAccumulator
-        tradeDataAccumulator = new TradeDataAccumulator(new CandleBatchSender());
+        tradesAccumulator = new TradesAccumulator(new CandleBatchSender());
     }
 
     /**
@@ -59,7 +59,7 @@ public class CandleMaker extends DatabaseSender {
      * Forms a candlestick
      */
     private void sendDataToDB(String symbol) {
-        tradeDataAccumulator.add(new Candle(openTime, minPrice, maxPrice, openPrice, currPrice,
+        tradesAccumulator.add(new Candle(openTime, minPrice, maxPrice, openPrice, currPrice,
                 symbol, exchangeId));
     }
 

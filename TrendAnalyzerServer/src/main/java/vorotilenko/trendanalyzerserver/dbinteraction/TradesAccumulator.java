@@ -1,16 +1,17 @@
 package vorotilenko.trendanalyzerserver.dbinteraction;
 
+import java.io.Closeable;
 import java.util.logging.Logger;
 
 /**
- * Accumulates data for sending to the DB ands sends it by sets
+ * Accumulates data for sending to the DB and sends it by sets
  * using BATCH queries when a given number is reached
  */
-public class TradeDataAccumulator {
+public class TradesAccumulator implements Closeable {
     /**
      * The default number of datasets after which the submission occurs
      */
-    private static final int DEFAULT_MAX_DATASETS_NUM = 50;
+    private static final int DEFAULT_MAX_DATASETS_NUM = 200;
 
     /**
      * The sending data to the DB thread
@@ -18,7 +19,7 @@ public class TradeDataAccumulator {
     private AsyncDataSender sender = null;
 
     /**
-     * An array in which data sets are accumulated to be sent to the DB
+     * An array in which datasets are accumulated to be sent to the DB
      */
     private final Object[] dataSets;
     /**
@@ -39,7 +40,7 @@ public class TradeDataAccumulator {
     /**
      * @param batchSender BatchSender for sending data to the DB as BATCH requests
      */
-    public TradeDataAccumulator(BatchSender batchSender) {
+    public TradesAccumulator(BatchSender batchSender) {
         maxDatasetsNum = DEFAULT_MAX_DATASETS_NUM;
         dataSets = new Object[maxDatasetsNum];
 
@@ -48,11 +49,11 @@ public class TradeDataAccumulator {
     }
 
     /**
+     * @param batchSender    BatchSender for sending data to the DB as BATCH requests
      * @param maxDatasetsNum The number of accumulated data sets, after reaching which
      *                       the sending to the DB will take place
-     * @param batchSender    BatchSender for sending data to the DB as BATCH requests
      */
-    public TradeDataAccumulator(int maxDatasetsNum, BatchSender batchSender) {
+    public TradesAccumulator(BatchSender batchSender, int maxDatasetsNum) {
         this.maxDatasetsNum = maxDatasetsNum;
         dataSets = new Object[maxDatasetsNum];
 
@@ -81,11 +82,10 @@ public class TradeDataAccumulator {
     }
 
     @Override
-    protected void finalize() throws Throwable {
+    public void close() {
         if (sender != null) {
             sender.interrupt();
             sender = null;
         }
-        super.finalize();
     }
 }

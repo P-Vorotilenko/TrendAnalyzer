@@ -2,6 +2,7 @@ package vorotilenko.trendanalyzerserver.clients;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Closeable;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -11,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Client, which reads trade data by WebSocket protocol and writes it to DB
  * */
-public abstract class ExchangeClient implements TradeInfoProvider {
+public abstract class ExchangeClient implements TradeInfoProvider, Closeable {
 
     /**
      * Trade listeners
@@ -62,9 +63,16 @@ public abstract class ExchangeClient implements TradeInfoProvider {
         });
     }
 
-    @Override
-    public void finalize() throws Throwable {
+    /**
+     * Should be called before exiting the program. Stops the work of the client
+     */
+    public void stop() {
         executorService.shutdownNow();
-        super.finalize();
+        tradeInfoListeners.clear();
+    }
+
+    @Override
+    public void close() {
+        stop();
     }
 }

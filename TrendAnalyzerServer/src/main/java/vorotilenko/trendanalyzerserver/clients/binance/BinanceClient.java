@@ -139,8 +139,16 @@ public class BinanceClient extends ExchangeClient {
         return ExchangeNames.BINANCE;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void finalize() throws Throwable {
-        super.finalize();
+    public void stop() {
+        try {
+            databaseSender.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        super.stop();
     }
 }

@@ -1,5 +1,6 @@
 package vorotilenko.trendanalyzerserver.dbinteraction;
 
+import java.io.Closeable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,7 +10,7 @@ import java.util.logging.Logger;
 /**
  * Class for sending data to the DB
  */
-public abstract class DatabaseSender {
+public abstract class DatabaseSender implements Closeable {
 
     /**
      * Logger

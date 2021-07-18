@@ -11,7 +11,10 @@ import vorotilenko.trendanalyzerserver.dbinteraction.DBInteraction;
 import vorotilenko.trendanalyzerserver.dbinteraction.DatabaseSender;
 import vorotilenko.trendanalyzerserver.dbinteraction.everytrade.EveryTradeSender;
 
+import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 public class HuobiClient extends ExchangeClient {
@@ -23,6 +26,11 @@ public class HuobiClient extends ExchangeClient {
     static {
         instance.start();
     }
+
+    /**
+     * DatabaseSenders have to be stored here for stopping them before exiting the program
+     */
+    private final List<DatabaseSender> databaseSenders = new ArrayList<>();
 
     /**
      * Logger
@@ -54,6 +62,7 @@ public class HuobiClient extends ExchangeClient {
             e.printStackTrace();
             return;
         }
+        databaseSenders.add(sender);
         marketClient.subMarketTrade(
                 SubMarketTradeRequest.builder().symbol(symbol.toLowerCase()).build(),
                 (marketTradeEvent) -> {
@@ -98,8 +107,18 @@ public class HuobiClient extends ExchangeClient {
         return ExchangeNames.HUOBI;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void finalize() throws Throwable {
-        super.finalize();
+    public void stop() {
+        databaseSenders.forEach(databaseSender -> {
+            try {
+                databaseSender.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        super.stop();
     }
 }

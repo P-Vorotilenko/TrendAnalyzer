@@ -3,6 +3,7 @@ package vorotilenko.trendanalyzerserver.dbinteraction.candle;
 import vorotilenko.trendanalyzerserver.dbinteraction.DatabaseSender;
 import vorotilenko.trendanalyzerserver.dbinteraction.TradesAccumulator;
 
+import java.io.IOException;
 import java.sql.*;
 
 /**
@@ -86,5 +87,10 @@ public class CandleMaker extends DatabaseSender {
             else if (currPrice > maxPrice)
                 maxPrice = currPrice;
         }
+    }
+
+    @Override
+    public void close() {
+        tradesAccumulator.close();
     }
 }

@@ -7,13 +7,29 @@
     tools:context=".activities.chooseexchange.ChooseExchangeActivity"
     android:background="@color/colorPrimary">
 
+    <EditText
+        android:id="@+id/etExchangeName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:hint="@string/search"
+        android:textColor="@color/colorLight"
+        android:textColorHint="@color/colorLight"
+        android:backgroundTint="@color/colorLight"
+        app:layout_constraintBottom_toTopOf="@id/rvExchangesList"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvExchangesList"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/etExchangeName" />
 </androidx.constraintlayout.widget.ConstraintLayout>

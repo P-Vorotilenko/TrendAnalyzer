@@ -1,4 +1,4 @@
-package vorotilenko.trendanalyzer
+package vorotilenko.trendanalyzer.interactionwithserver
 
 object ExchangeNames {
     const val BINANCE = "Binance"

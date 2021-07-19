@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">TrendAnalyzer</string>
+    <string name="fab_content_description">Add symbol</string>
+    <string name="no_symbols_observed">No symbols are currently observed</string>
+    <string name="unknown_exchange">Unknown exchange</string>
 </resources>

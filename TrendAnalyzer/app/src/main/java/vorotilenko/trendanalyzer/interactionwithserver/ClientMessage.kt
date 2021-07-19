@@ -1,4 +1,4 @@
-package vorotilenko.trendanalyzer
+package vorotilenko.trendanalyzer.interactionwithserver
 
 /**
  * Class for parsing JSON messages which are sent from [WSClientEndpoint] to server.

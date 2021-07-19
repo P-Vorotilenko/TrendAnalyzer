@@ -1,9 +1,10 @@
-package vorotilenko.trendanalyzer
+package vorotilenko.trendanalyzer.interactionwithserver
 
 import android.os.Handler
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import org.glassfish.tyrus.client.ClientManager
+import vorotilenko.trendanalyzer.TradeInfo
 import java.net.URI
 import javax.websocket.ClientEndpoint
 import javax.websocket.OnMessage
@@ -75,7 +76,8 @@ class WSClientEndpoint(private val handler: Handler) {
         fun start(handler: Handler) {
             thread {
                 val client = ClientManager.createClient()
-                client.connectToServer(WSClientEndpoint(handler),
+                client.connectToServer(
+                    WSClientEndpoint(handler),
                     URI("ws://192.168.0.104:8025/atserver"))
             }
         }

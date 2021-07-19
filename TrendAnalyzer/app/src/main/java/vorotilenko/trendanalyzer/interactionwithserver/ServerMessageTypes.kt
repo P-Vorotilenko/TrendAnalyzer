@@ -1,4 +1,4 @@
-package vorotilenko.trendanalyzer
+package vorotilenko.trendanalyzer.interactionwithserver
 
 /**
  * Types of JSON messages which are sent from the server to the [WSClientEndpoint]

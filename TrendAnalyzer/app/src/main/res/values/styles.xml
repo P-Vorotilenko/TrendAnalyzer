@@ -4,6 +4,6 @@
         <item name="actionBarStyle">@style/Custom.ActionBar</item>
     </style>
     <style name="Custom.ActionBar" parent="Widget.MaterialComponents.Light.ActionBar.Solid">
-        <item name="background">@color/chartBackgroundColor</item>
+        <item name="background">@color/colorPrimary</item>
     </style>
 </resources>

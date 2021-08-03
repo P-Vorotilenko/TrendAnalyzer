@@ -13,7 +13,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TrendAnalyzer">
-        <activity android:name=".activities.chooseexchange.ChooseExchangeActivity"></activity>
+        <activity
+            android:name=".activities.select.SelectCurrencyActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activities.ChooseSymbolActivity"
+            android:exported="true" />
+        <activity android:name=".activities.select.SelectExchangeActivity" />
         <activity android:name=".activities.observedsymbols.ObservedSymbolsActivity" />
         <activity android:name=".activities.MainActivity">
             <intent-filter>

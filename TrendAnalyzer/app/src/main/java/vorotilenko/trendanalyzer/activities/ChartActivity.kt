@@ -20,8 +20,8 @@ import com.github.mikephil.charting.formatter.IAxisValueFormatter
 import vorotilenko.trendanalyzer.R
 import vorotilenko.trendanalyzer.TradeData
 import vorotilenko.trendanalyzer.TradeInfo
-import vorotilenko.trendanalyzer.interactionwithserver.ServerMessageTypes
-import vorotilenko.trendanalyzer.interactionwithserver.WSClientEndpoint
+import vorotilenko.trendanalyzer.serverinteraction.ServerMessageTypes
+import vorotilenko.trendanalyzer.serverinteraction.WSClientEndpoint
 import java.lang.ref.WeakReference
 import java.text.DateFormat
 import java.text.SimpleDateFormat

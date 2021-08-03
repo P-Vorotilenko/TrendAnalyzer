@@ -7,8 +7,7 @@ import android.view.View
 import android.widget.TextView
 import vorotilenko.trendanalyzer.Constants
 import vorotilenko.trendanalyzer.R
-import vorotilenko.trendanalyzer.activities.chooseexchange.ChooseExchangeActivity
-import vorotilenko.trendanalyzer.activities.chooseexchange.Exchange
+import vorotilenko.trendanalyzer.activities.select.SelectExchangeActivity
 
 class ObservedSymbolsActivity : AppCompatActivity() {
 
@@ -25,7 +24,7 @@ class ObservedSymbolsActivity : AppCompatActivity() {
     }
 
     fun onAddSymbolBtnClick(view: View?) {
-        val intent = Intent(applicationContext, ChooseExchangeActivity::class.java)
+        val intent = Intent(applicationContext, SelectExchangeActivity::class.java)
         startActivity(intent)
     }
 }

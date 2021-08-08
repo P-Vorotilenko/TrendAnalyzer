@@ -21,8 +21,6 @@ class MainActivity : AppCompatActivity() {
             Intent(applicationContext, ChartActivity::class.java)
                 .putExtra(Constants.LISTENED_SYMBOLS, listened)
         }
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
     }
 }

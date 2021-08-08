@@ -20,7 +20,8 @@ class WSClientEndpoint(private val handler: Handler) {
      */
     @OnOpen
     fun onOpen(session: Session) {
-        val symbols = arrayOf(Symbols.BTCUSDT)
+        val symbols =
+            arrayOf(Currencies.getSymbol(Currencies.BITCOIN, Currencies.TETHER) ?: "BTCUSDT")
         val exchangeMap = HashMap<String, Array<String>>()
         exchangeMap[ExchangeNames.BINANCE] = symbols
         exchangeMap[ExchangeNames.HUOBI] = symbols
@@ -78,7 +79,7 @@ class WSClientEndpoint(private val handler: Handler) {
                 val client = ClientManager.createClient()
                 client.connectToServer(
                     WSClientEndpoint(handler),
-                    URI("ws://192.168.0.104:8025/atserver"))
+                    URI("ws://192.168.0.104:8025/taserver"))
             }
         }
     }

@@ -3,14 +3,18 @@ package vorotilenko.trendanalyzer.activities.select
 import android.annotation.SuppressLint
 import android.text.Editable
 import android.text.TextWatcher
+import androidx.recyclerview.widget.RecyclerView
 
 /**
- * Listener for search bars in [SelectExchangeActivity] and [SelectCurrencyActivity]
+ * Listener for search bar in
+ * [SelectExchangeActivity][vorotilenko.trendanalyzer.activities.select.exchange.SelectExchangeActivity]
+ * and
+ * [SelectFirstCurrencyActivity][vorotilenko.trendanalyzer.activities.select.currency.SelectFirstCurrencyActivity]
  */
-class SearchBarWatcher(
-    private val shownListItems: MutableList<ListItem>,
-    private val allListItems: List<ListItem>,
-    private val adapter: RVAdapter
+class SearchBarWatcher<T : ListItem>(
+    private val shownListItems: MutableList<T>,
+    private val allListItems: Array<T>,
+    private val adapter: RecyclerView.Adapter<*>
 ) : TextWatcher {
     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 

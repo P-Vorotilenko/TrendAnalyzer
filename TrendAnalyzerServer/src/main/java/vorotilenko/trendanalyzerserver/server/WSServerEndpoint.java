@@ -17,7 +17,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
-@ServerEndpoint(value = "/atserver")
+@ServerEndpoint(value = "/taserver")
 public class WSServerEndpoint implements TradeInfoListener {
 
     //TODO: Organize WSS

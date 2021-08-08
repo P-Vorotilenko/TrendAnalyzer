@@ -551,9 +551,22 @@ class ChartActivity : AppCompatActivity() {
     override fun onDestroy() {
         clientEndpointHandler.removeCallbacksAndMessages(null)
         super.onDestroy()
+        ChartActivity.EXCHANGE_NAME
     }
 
     companion object {
+
+        /**
+         * Key for exchange name passed from
+         * [SelectFirstCurrencyActivity][vorotilenko.trendanalyzer.activities.select.SelectFirstCurrencyActivity]
+         */
+        const val EXCHANGE_NAME = "exchangeName"
+
+        /**
+         * Key for symbol passed from
+         * [SelectFirstCurrencyActivity][vorotilenko.trendanalyzer.activities.select.SelectFirstCurrencyActivity]
+         */
+        const val SYMBOL = "symbol"
 
         /**
          * Chart grid line width

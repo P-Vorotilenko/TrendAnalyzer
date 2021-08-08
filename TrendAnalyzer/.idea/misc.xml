@@ -5,9 +5,13 @@
       <map>
         <entry key="..\:/Soft/TrendAnalyzer/TrendAnalyzer/TrendAnalyzer/app/src/main/res/layout/activity_choose_exchange.xml" value="0.22" />
         <entry key="..\:/Soft/TrendAnalyzer/TrendAnalyzer/TrendAnalyzer/app/src/main/res/layout/activity_choose_symbol.xml" value="0.14945652173913043" />
+        <entry key="..\:/Soft/TrendAnalyzer/TrendAnalyzer/TrendAnalyzer/app/src/main/res/layout/activity_select_currency.xml" value="0.25" />
         <entry key="..\:/Soft/TrendAnalyzer/TrendAnalyzer/TrendAnalyzer/app/src/main/res/layout/activity_select_exchange.xml" value="0.12228260869565218" />
+        <entry key="..\:/Soft/TrendAnalyzer/TrendAnalyzer/TrendAnalyzer/app/src/main/res/layout/activity_select_second_currency.xml" value="0.1286231884057971" />
         <entry key="..\:/Soft/TrendAnalyzer/TrendAnalyzer/TrendAnalyzer/app/src/main/res/layout/activity_select_symbol.xml" value="0.12228260869565218" />
+        <entry key="..\:/Soft/TrendAnalyzer/TrendAnalyzer/TrendAnalyzer/app/src/main/res/layout/currencies_list_item.xml" value="0.67" />
         <entry key="..\:/Soft/TrendAnalyzer/TrendAnalyzer/TrendAnalyzer/app/src/main/res/layout/exchange_item.xml" value="0.12409420289855072" />
+        <entry key="..\:/Soft/TrendAnalyzer/TrendAnalyzer/TrendAnalyzer/app/src/main/res/layout/exchanges_list_item.xml" value="0.25" />
         <entry key="..\:/Soft/TrendAnalyzer/TrendAnalyzer/TrendAnalyzer/app/src/main/res/layout/select_list_item.xml" value="0.33" />
       </map>
     </option>

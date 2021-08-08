@@ -8,4 +8,9 @@
     <string name="select_exchange">Please, select the exchange</string>
     <string name="select_1st_currency">Please, select the first currency</string>
     <string name="select_2nd_currency">Please, select the second currency</string>
+    <string name="err_selecting_exchange">Something went wrong while selecting exchange</string>
+    <string name="err_selecting_currency">Something went wrong while selecting currency</string>
+    <string name="err_selecting_symbol">
+        Something went wrong while selecting exchange and symbol
+    </string>
 </resources>

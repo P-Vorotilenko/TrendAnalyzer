@@ -8,25 +8,25 @@
 
     <ImageView
         android:id="@+id/ivLogo"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:layout_margin="15dp"
+        android:contentDescription="@string/logo"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_launcher_foreground"
-        android:contentDescription="@string/logo"/>
+        app:srcCompat="@drawable/ic_launcher_foreground" />
 
     <TextView
-        android:id="@+id/tvItemName"
+        android:id="@+id/tvExchangeName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="18dp"
         android:text="@string/loading"
         android:textColor="@color/colorLight"
         android:textSize="17sp"
+        app:layout_constraintBottom_toBottomOf="@id/ivLogo"
         app:layout_constraintStart_toEndOf="@+id/ivLogo"
-        app:layout_constraintTop_toTopOf="@id/ivLogo"
-        app:layout_constraintBottom_toBottomOf="@id/ivLogo"/>
+        app:layout_constraintTop_toTopOf="@id/ivLogo" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

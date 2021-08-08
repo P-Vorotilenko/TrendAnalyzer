@@ -3,13 +3,13 @@ package vorotilenko.trendanalyzer.activities.select
 /**
  * Item in a list of exchanges or currencies
  */
-data class ListItem(
+open class ListItem(
     /**
      * Name that will be shown to user
      */
-    val name: String,
+    open val name: String,
     /**
-     * Image resource of exchange's or currency's logo
+     * Image resource of item's logo
      */
-    val logoRes: Int
+    open val logoRes: Int
 )

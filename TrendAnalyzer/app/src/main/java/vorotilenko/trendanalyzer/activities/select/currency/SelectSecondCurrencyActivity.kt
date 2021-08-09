@@ -29,7 +29,8 @@ class SelectSecondCurrencyActivity : AppCompatActivity() {
         val observedItem = extras?.getParcelable<ObservedListItem>(NEW_ITEM)
         val adapter = CurrenciesAdapter(applicationContext, shownCurrencies) { currency, _ ->
             observedItem?.apply {
-                symbol += Currencies.getTicker(currency.name)
+                symbolName += " \\ ${currency.name}"
+                symbolTicker += Currencies.getTicker(currency.name)
                 currency2Logo = currency.logoRes
             }
             setResult(RESULT_OK, Intent().putExtra(NEW_ITEM, observedItem))
@@ -44,7 +45,7 @@ class SelectSecondCurrencyActivity : AppCompatActivity() {
         setContentView(R.layout.activity_select_first_currency)
 
         val extras = intent.extras
-        val firstCurrencyTicker = extras?.getParcelable<ObservedListItem?>(NEW_ITEM)?.symbol
+        val firstCurrencyTicker = extras?.getParcelable<ObservedListItem?>(NEW_ITEM)?.symbolTicker
 
         title = resources.getString(R.string.select_2nd_currency)
         allCurrencies =

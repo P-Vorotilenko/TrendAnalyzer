@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorPrimary">
+
+    <ImageView
+        android:id="@+id/ivCurrency1Logo"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_margin="15dp"
+        android:translationZ="1dp"
+        android:contentDescription="@string/logo"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_launcher_foreground" />
+
+    <ImageView
+        android:id="@+id/ivCurrency2Logo"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="40dp"
+        android:contentDescription="@string/logo"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_launcher_foreground" />
+
+    <TextView
+        android:id="@+id/tvSymbolName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="18dp"
+        android:text="@string/loading"
+        android:textColor="@color/colorLight"
+        android:textSize="17sp"
+        app:layout_constraintStart_toEndOf="@+id/ivCurrency2Logo"
+        app:layout_constraintTop_toTopOf="@id/ivCurrency2Logo"
+        app:layout_constraintBottom_toTopOf="@id/tvSymbolTicker"
+        app:layout_constraintVertical_chainStyle="spread_inside"/>
+
+    <TextView
+        android:id="@+id/tvSymbolTicker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="18dp"
+        android:text="@string/loading"
+        android:textColor="@color/colorLightGray"
+        android:textSize="17sp"
+        app:layout_constraintBottom_toBottomOf="@id/ivCurrency2Logo"
+        app:layout_constraintStart_toEndOf="@+id/ivCurrency2Logo"
+        app:layout_constraintTop_toBottomOf="@id/tvSymbolName"/>
+
+    <TextView
+        android:id="@+id/tvExchangeName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="15dp"
+        android:text="@string/loading"
+        android:textColor="@color/colorLight"
+        android:textSize="17sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/tvSymbolTicker"/>
+
+    <ImageView
+        android:id="@+id/ivExchangeLogo"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="1"
+        android:layout_marginEnd="15dp"
+        android:contentDescription="@string/logo"
+        app:layout_constraintTop_toTopOf="@id/tvSymbolName"
+        app:layout_constraintBottom_toBottomOf="@id/tvSymbolName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_launcher_foreground" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

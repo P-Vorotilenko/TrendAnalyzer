@@ -13,4 +13,6 @@
     <string name="err_selecting_symbol">
         Something went wrong while selecting exchange and symbol
     </string>
+    <string name="symbol_removed">Symbol removed</string>
+    <string name="undo">Undo</string>
 </resources>

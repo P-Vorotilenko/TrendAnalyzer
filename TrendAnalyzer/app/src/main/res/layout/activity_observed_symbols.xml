@@ -8,6 +8,7 @@
     android:background="@color/colorPrimary">
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvObservedSymbols"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
@@ -34,10 +35,10 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:clickable="true"
+        android:contentDescription="@string/fab_content_description"
         android:focusable="true"
-        android:onClick="onAddSymbolBtnClick"
+        app:backgroundTint="@color/teal_700"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@android:drawable/ic_input_add"
-        android:contentDescription="@string/fab_content_description" />
+        app:srcCompat="@android:drawable/ic_input_add" />
 </androidx.constraintlayout.widget.ConstraintLayout>

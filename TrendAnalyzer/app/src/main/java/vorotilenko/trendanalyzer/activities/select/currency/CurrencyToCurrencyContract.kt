@@ -26,7 +26,7 @@ class CurrencyToCurrencyContract : ActivityResultContract<ObservedListItem?, Obs
         input: ObservedListItem?
     ): SynchronousResult<ObservedListItem?>? {
         return if (input?.exchangeName == null || input.exchangeLogo == 0 ||
-            input.symbol == null || input.currency1Logo == 0
+            input.symbolTicker == null || input.symbolName == null || input.currency1Logo == 0
         ) SynchronousResult(null)
         else null
     }

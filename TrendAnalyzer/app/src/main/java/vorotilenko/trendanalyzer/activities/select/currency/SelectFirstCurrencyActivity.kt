@@ -34,7 +34,8 @@ class SelectFirstCurrencyActivity : AppCompatActivity() {
         val observedItem = extras?.getParcelable<ObservedListItem>(NEW_ITEM)
         val adapter = CurrenciesAdapter(applicationContext, shownCurrencies) { currency, _ ->
             observedItem?.apply {
-                symbol = Currencies.getTicker(currency.name)
+                symbolName = currency.name
+                symbolTicker = Currencies.getTicker(currency.name)
                 currency1Logo = currency.logoRes
             }
             secondCurrencyLauncher.launch(observedItem)

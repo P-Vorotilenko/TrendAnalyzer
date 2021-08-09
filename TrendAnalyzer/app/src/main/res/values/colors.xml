@@ -15,4 +15,5 @@
     <color name="gridColor">#33888888</color>
     <color name="xAxisLabelsTextColor">#99FFFFFF</color>
     <color name="colorPrimary">#141D29</color>
+    <color name="darkBlue">#101822</color>
 </resources>

@@ -119,22 +119,53 @@ public class BinanceClient extends ExchangeClient {
     }
 
     /**
+     * Appends symbol of currency1 and currency2 to url
+     */
+    private static void appendSymbol(StringBuilder url, String currency1, String currency2) {
+        url.append(currency1.toLowerCase(Locale.ROOT))
+                .append(currency2.toLowerCase(Locale.ROOT))
+                .append("@miniTicker/");
+    }
+
+    /**
+     * Creates url for connection to Binance
+     */
+    private static String createUrl() {
+        StringBuilder url = new StringBuilder("wss://stream.binance.com:9443/stream?streams=");
+        appendSymbol(url, Currencies.BTC, Currencies.USDT);
+        appendSymbol(url, Currencies.ETH, Currencies.BTC);
+        appendSymbol(url, Currencies.ETH, Currencies.USDT);
+        appendSymbol(url, Currencies.ADA, Currencies.BTC);
+        appendSymbol(url, Currencies.ADA, Currencies.ETH);
+        appendSymbol(url, Currencies.ADA, Currencies.USDT);
+        appendSymbol(url, Currencies.XRP, Currencies.BTC);
+        appendSymbol(url, Currencies.XRP, Currencies.ETH);
+        appendSymbol(url, Currencies.XRP, Currencies.USDT);
+        appendSymbol(url, Currencies.DOT, Currencies.BTC);
+        appendSymbol(url, Currencies.DOT, Currencies.USDT);
+        appendSymbol(url, Currencies.UNI, Currencies.BTC);
+        appendSymbol(url, Currencies.UNI, Currencies.USDT);
+        appendSymbol(url, Currencies.BCH, Currencies.BTC);
+        appendSymbol(url, Currencies.BCH, Currencies.USDT);
+        appendSymbol(url, Currencies.LTC, Currencies.BTC);
+        appendSymbol(url, Currencies.LTC, Currencies.ETH);
+        appendSymbol(url, Currencies.LTC, Currencies.USDT);
+        appendSymbol(url, Currencies.SOL, Currencies.BTC);
+        appendSymbol(url, Currencies.SOL, Currencies.USDT);
+        appendSymbol(url, Currencies.LINK, Currencies.BTC);
+        appendSymbol(url, Currencies.LINK, Currencies.ETH);
+        appendSymbol(url, Currencies.LINK, Currencies.USDT);
+        url.deleteCharAt(url.length() - 1);
+        return url.toString();
+    }
+
+    /**
      * Runs the client
      */
     protected static void start() throws NullPointerException {
         try {
             ClientManager client = ClientManager.createClient();
-            StringBuilder url = new StringBuilder("wss://stream.binance.com:9443/stream?streams=");
-            for (String firstCurrency : Currencies.getArray()) {
-                for (String secondCurrency : Currencies.getArray()) {
-                    if (!firstCurrency.equals(secondCurrency))
-                        url.append(firstCurrency.toLowerCase(Locale.ROOT))
-                                .append(secondCurrency.toLowerCase(Locale.ROOT))
-                                .append("@miniTicker/");
-                }
-            }
-            url.deleteCharAt(url.length() - 1);
-            client.connectToServer(instance, new URI(url.toString()));
+            client.connectToServer(instance, new URI(createUrl()));
         } catch (DeploymentException | URISyntaxException | IOException e) {
             throw new RuntimeException(e);
         }

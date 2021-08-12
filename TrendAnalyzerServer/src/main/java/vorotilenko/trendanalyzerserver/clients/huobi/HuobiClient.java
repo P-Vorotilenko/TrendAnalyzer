@@ -26,9 +26,9 @@ public class HuobiClient extends ExchangeClient {
     }
 
     /**
-     * DatabaseSenders have to be stored here for stopping them before exiting the program
+     * DatabaseSender have to be stored here for stopping it before exiting the program
      */
-    private final List<DatabaseSender> databaseSenders = new ArrayList<>();
+    private DatabaseSender databaseSender;
 
     /**
      * Class implements Standalone pattern
@@ -45,21 +45,11 @@ public class HuobiClient extends ExchangeClient {
     /**
      * Subscribes to updates by the passed symbol
      * @param symbol Symbol which has to be observed
-     * @param huobiId Huobi ID in the Database
      */
-    private void subscToUpdates(String symbol, short huobiId) {
-        MarketClient marketClient = MarketClient.create(new HuobiOptions());
-        final DatabaseSender sender;
-        try {
-            sender = new EveryTradeSender(huobiId, 1);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return;
-        }
-        databaseSenders.add(sender);
-        marketClient.subMarketTrade(
+    private void subscToUpdates(String symbol) {
+        MarketClient.create(new HuobiOptions()).subMarketTrade(
                 SubMarketTradeRequest.builder().symbol(symbol.toLowerCase()).build(),
-                new HuobiTradeCallback(symbol, sender, this)
+                new HuobiTradeCallback(symbol, databaseSender, this)
         );
     }
 
@@ -72,12 +62,35 @@ public class HuobiClient extends ExchangeClient {
             throw new RuntimeException(String.format(
                     "Exchange %s was not found in the DB", ExchangeNames.HUOBI));
         }
-        for (String firstCurrency : Currencies.getArray()) {
-            for (String secondCurrency : Currencies.getArray()) {
-                if (!firstCurrency.equals(secondCurrency))
-                    subscToUpdates(firstCurrency + secondCurrency, huobiId);
-            }
+        try {
+            databaseSender = new EveryTradeSender(huobiId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error while connecting to DB");
         }
+        subscToUpdates(Currencies.BTC + Currencies.USDT);
+        subscToUpdates(Currencies.ETH + Currencies.USDT);
+        subscToUpdates(Currencies.ETH + Currencies.BTC);
+        subscToUpdates(Currencies.ADA + Currencies.USDT);
+        subscToUpdates(Currencies.ADA + Currencies.BTC);
+        subscToUpdates(Currencies.ADA + Currencies.ETH);
+        subscToUpdates(Currencies.XRP + Currencies.USDT);
+        subscToUpdates(Currencies.XRP + Currencies.BTC);
+        subscToUpdates(Currencies.DOT + Currencies.USDT);
+        subscToUpdates(Currencies.DOT + Currencies.BTC);
+        subscToUpdates(Currencies.UNI + Currencies.USDT);
+        subscToUpdates(Currencies.UNI + Currencies.BTC);
+        subscToUpdates(Currencies.UNI + Currencies.ETH);
+        subscToUpdates(Currencies.BCH + Currencies.USDT);
+        subscToUpdates(Currencies.BCH + Currencies.BTC);
+        subscToUpdates(Currencies.LTC + Currencies.USDT);
+        subscToUpdates(Currencies.LTC + Currencies.BTC);
+        subscToUpdates(Currencies.SOL + Currencies.USDT);
+        subscToUpdates(Currencies.SOL + Currencies.BTC);
+        subscToUpdates(Currencies.SOL + Currencies.ETH);
+        subscToUpdates(Currencies.LINK + Currencies.USDT);
+        subscToUpdates(Currencies.LINK + Currencies.BTC);
+        subscToUpdates(Currencies.LINK + Currencies.ETH);
     }
 
     @Override
@@ -90,13 +103,11 @@ public class HuobiClient extends ExchangeClient {
      */
     @Override
     public void stop() {
-        databaseSenders.forEach(databaseSender -> {
-            try {
-                databaseSender.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
+        try {
+            databaseSender.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         super.stop();
     }
 }

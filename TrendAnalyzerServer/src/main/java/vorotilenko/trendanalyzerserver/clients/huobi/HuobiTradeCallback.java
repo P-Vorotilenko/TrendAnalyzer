@@ -33,14 +33,19 @@ public class HuobiTradeCallback implements ResponseCallback<MarketTradeEvent> {
             // Sending data not more often than once a second for each symbol
             if ((timestamp - lastTradeTime) >= 1000) {
                 double price = marketTrade.getPrice().doubleValue();
-                // Sending data to the DB
-                sender.putData(symbol, timestamp, price);
                 // Sending data to listeners
                 TradeInfo tradeInfo =
                         new TradeInfo(symbol, timestamp, price, ExchangeNames.HUOBI);
                 client.notifyTradeInfoListeners(tradeInfo);
-
+                // Updating time of last sent trade
                 lastTradeTime = timestamp;
+
+                //TODO: replace synchronized with executor thread
+
+                // Sending data to the DB
+                synchronized (sender) {
+                    sender.putData(symbol, timestamp, price);
+                }
             }
         });
     }

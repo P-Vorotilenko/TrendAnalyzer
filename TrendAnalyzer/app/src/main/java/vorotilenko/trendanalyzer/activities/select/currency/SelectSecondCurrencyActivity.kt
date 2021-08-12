@@ -12,9 +12,10 @@ import vorotilenko.trendanalyzer.activities.select.SearchBarWatcher
 import vorotilenko.trendanalyzer.serverinteraction.Currencies
 
 class SelectSecondCurrencyActivity : AppCompatActivity() {
-
-    private lateinit var allCurrencies: Array<CurrenciesListItem>
-
+    /**
+     * Currencies which are available for this exchange and first currency
+     */
+    private lateinit var availableCurrencies: Array<CurrenciesListItem>
     /**
      * Currencies which are shown in the list
      */
@@ -24,9 +25,8 @@ class SelectSecondCurrencyActivity : AppCompatActivity() {
      * Sets adapter to the RecyclerView
      * @return Created adapter
      */
-    private fun setRVAdapter(extras: Bundle?): CurrenciesAdapter {
+    private fun setRVAdapter(observedItem: ObservedListItem?): CurrenciesAdapter {
         val rvCurrenciesList = findViewById<RecyclerView>(R.id.rvCurrenciesList)
-        val observedItem = extras?.getParcelable<ObservedListItem>(NEW_ITEM)
         val adapter = CurrenciesAdapter(applicationContext, shownCurrencies) { currency, _ ->
             observedItem?.apply {
                 symbolName += " \\ ${currency.name}"
@@ -44,20 +44,23 @@ class SelectSecondCurrencyActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_select_first_currency)
 
-        val extras = intent.extras
-        val firstCurrencyTicker = extras?.getParcelable<ObservedListItem?>(NEW_ITEM)?.symbolTicker
+        val observedItem = intent.extras?.getParcelable<ObservedListItem>(NEW_ITEM)
+        val exchangeName = observedItem?.exchangeName
 
         title = resources.getString(R.string.select_2nd_currency)
-        allCurrencies =
-            SelectFirstCurrencyActivity.allCurrencies.filter {
-                Currencies.getTicker(it.name) != firstCurrencyTicker
-            }.toTypedArray()
-        shownCurrencies = allCurrencies.toMutableList()
 
-        val adapter = setRVAdapter(extras)
+        availableCurrencies =
+            SelectFirstCurrencyActivity.allCurrencies.filter {
+                val availableSymbols =
+                    Currencies.availableSymbols[exchangeName]?.get(observedItem?.symbolTicker)
+                availableSymbols != null && availableSymbols.contains(it.ticker)
+            }.toTypedArray()
+        shownCurrencies = availableCurrencies.toMutableList()
+
+        val adapter = setRVAdapter(observedItem)
 
         val etCurrencyName = findViewById<EditText>(R.id.etCurrencyName)
-        val textChangedListener = SearchBarWatcher(shownCurrencies, allCurrencies, adapter)
+        val textChangedListener = SearchBarWatcher(shownCurrencies, availableCurrencies, adapter)
         etCurrencyName.addTextChangedListener(textChangedListener)
     }
 }

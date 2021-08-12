@@ -13,9 +13,13 @@ import vorotilenko.trendanalyzer.serverinteraction.Currencies
 
 class SelectFirstCurrencyActivity : AppCompatActivity() {
     /**
+     * Currencies which are available for this exchange
+     */
+    private lateinit var availableCurrencies: Array<CurrenciesListItem>
+    /**
      * Currencies which are shown in the list
      */
-    private val shownCurrencies = allCurrencies.toMutableList()
+    private lateinit var shownCurrencies: MutableList<CurrenciesListItem>
 
     private val secondCurrencyLauncher =
         registerForActivityResult(CurrencyToCurrencyContract()) { result ->
@@ -29,9 +33,8 @@ class SelectFirstCurrencyActivity : AppCompatActivity() {
      * Sets adapter to the RecyclerView
      * @return Created adapter
      */
-    private fun setRVAdapter(extras: Bundle?): CurrenciesAdapter {
+    private fun setRVAdapter(observedItem: ObservedListItem?): CurrenciesAdapter {
         val rvCurrenciesList = findViewById<RecyclerView>(R.id.rvCurrenciesList)
-        val observedItem = extras?.getParcelable<ObservedListItem>(NEW_ITEM)
         val adapter = CurrenciesAdapter(applicationContext, shownCurrencies) { currency, _ ->
             observedItem?.apply {
                 symbolName = currency.name
@@ -48,11 +51,17 @@ class SelectFirstCurrencyActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_select_first_currency)
 
-        val extras = intent.extras
+        val observedItem = intent.extras?.getParcelable<ObservedListItem>(NEW_ITEM)
+        val exchangeName = observedItem?.exchangeName
+        availableCurrencies = allCurrencies.filter {
+            val symbolsMap = Currencies.availableSymbols[exchangeName]
+            symbolsMap != null && symbolsMap.containsKey(it.ticker)
+        }.toTypedArray()
+        shownCurrencies = availableCurrencies.toMutableList()
 
         title = resources.getString(R.string.select_1st_currency)
 
-        val adapter = setRVAdapter(extras)
+        val adapter = setRVAdapter(observedItem)
 
         val etCurrencyName = findViewById<EditText>(R.id.etCurrencyName)
         val textChangedListener = SearchBarWatcher(shownCurrencies, allCurrencies, adapter)

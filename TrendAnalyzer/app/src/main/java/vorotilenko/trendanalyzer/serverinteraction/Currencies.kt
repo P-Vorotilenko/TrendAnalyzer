@@ -25,6 +25,39 @@ object Currencies {
     const val USDT = "USDT"
 
     /**
+     * Symbols available to observe. This structure represents which symbols are observed
+     * by the server. To each exchange name there is corresponding map which contains
+     * first currency as a key and a set of currencies which can create a pair with the first
+     * currency.
+     */
+    val availableSymbols = mapOf(
+        ExchangeNames.BINANCE to mapOf(
+            BTC to setOf(USDT),
+            ETH to setOf(BTC, USDT),
+            ADA to setOf(BTC, USDT, ETH),
+            XRP to setOf(BTC, USDT, ETH),
+            DOT to setOf(BTC, USDT),
+            UNI to setOf(BTC, USDT),
+            BCH to setOf(BTC, USDT),
+            LTC to setOf(BTC, USDT, ETH),
+            SOL to setOf(BTC, USDT),
+            LINK to setOf(BTC, USDT, ETH)
+        ),
+        ExchangeNames.HUOBI to mapOf(
+            BTC to setOf(USDT),
+            ETH to setOf(BTC, USDT),
+            ADA to setOf(BTC, USDT, ETH),
+            XRP to setOf(BTC, USDT),
+            DOT to setOf(BTC, USDT),
+            UNI to setOf(BTC, USDT, ETH),
+            BCH to setOf(BTC, USDT),
+            LTC to setOf(BTC, USDT),
+            SOL to setOf(BTC, USDT, ETH),
+            LINK to setOf(BTC, USDT, ETH)
+        )
+    )
+
+    /**
      * @param currency Full name of the currency specified in [Currencies] e.g. "Bitcoin"
      * @return Ticker of the currency e.g. "BTC" or null if the currency name is not
      * specified in [Currencies]

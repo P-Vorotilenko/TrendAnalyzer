@@ -8,6 +8,9 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 
+/**
+ * Subscribes listener of {@link TradeInfoProvider} to updates of requested symbols
+ */
 public class SubscTIListenerWorker extends SwingWorker<List<List<TradeInfo>>, Integer> {
     /**
      * Query for getting all of the trade data from the DB

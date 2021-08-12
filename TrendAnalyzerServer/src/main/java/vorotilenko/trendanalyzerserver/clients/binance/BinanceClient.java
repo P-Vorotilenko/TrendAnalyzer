@@ -2,6 +2,7 @@ package vorotilenko.trendanalyzerserver.clients.binance;
 
 import com.google.gson.Gson;
 import org.glassfish.tyrus.client.ClientManager;
+import vorotilenko.trendanalyzerserver.Currencies;
 import vorotilenko.trendanalyzerserver.ExchangeNames;
 import vorotilenko.trendanalyzerserver.clients.ExchangeClient;
 import vorotilenko.trendanalyzerserver.clients.TradeInfo;
@@ -13,6 +14,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
+import java.util.Locale;
 import java.util.logging.Logger;
 
 @ClientEndpoint
@@ -78,16 +80,14 @@ public class BinanceClient extends ExchangeClient {
     @OnMessage
     public void onMessage(String message, Session session) {
         // Parsing JSON
-        CombinedMessage combinedMessage = gson.fromJson(message, CombinedMessage.class);
-        String symbol = combinedMessage.data.s;
-        long time = combinedMessage.data.T;
-        double price = combinedMessage.data.p;
+        BinanceTradeInfo tradeInfo = gson.fromJson(message, CombinedMessage.class).data;
+        String symbol = tradeInfo.s;
+        long time = tradeInfo.E;
+        double price = tradeInfo.c;
         // Sending data to the DB
         databaseSender.putData(symbol, time, price);
         // Sending data to listeners
         notifyTradeInfoListeners(new TradeInfo(symbol, time, price, ExchangeNames.BINANCE));
-
-        //logger.info("Binance:\n" + message);
     }
 
     /**
@@ -124,11 +124,17 @@ public class BinanceClient extends ExchangeClient {
     protected static void start() throws NullPointerException {
         try {
             ClientManager client = ClientManager.createClient();
-            client.connectToServer(instance,
-                    new URI("wss://stream.binance.com:9443/stream?streams=" +
-                            "btcusdt@aggTrade/ethusdt@aggTrade/adausdt@aggTrade/xrpusdt@aggTrade/" +
-                            "dotusdt@aggTrade/uniusdt@aggTrade/bchusdt@aggTrade/ltcusdt@aggTrade/" +
-                            "solusdt@aggTrade/linkusdt@aggTrade"));
+            StringBuilder url = new StringBuilder("wss://stream.binance.com:9443/stream?streams=");
+            for (String firstCurrency : Currencies.getArray()) {
+                for (String secondCurrency : Currencies.getArray()) {
+                    if (!firstCurrency.equals(secondCurrency))
+                        url.append(firstCurrency.toLowerCase(Locale.ROOT))
+                                .append(secondCurrency.toLowerCase(Locale.ROOT))
+                                .append("@miniTicker/");
+                }
+            }
+            url.deleteCharAt(url.length() - 1);
+            client.connectToServer(instance, new URI(url.toString()));
         } catch (DeploymentException | URISyntaxException | IOException e) {
             throw new RuntimeException(e);
         }

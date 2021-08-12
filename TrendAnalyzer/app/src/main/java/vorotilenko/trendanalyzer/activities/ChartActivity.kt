@@ -558,13 +558,13 @@ class ChartActivity : AppCompatActivity() {
 
         /**
          * Key for exchange name passed from
-         * [SelectFirstCurrencyActivity][vorotilenko.trendanalyzer.activities.select.SelectFirstCurrencyActivity]
+         * [ObservedSymbolsActivity][vorotilenko.trendanalyzer.activities.observedsymbols.ObservedSymbolsActivity]
          */
         const val EXCHANGE_NAME = "exchangeName"
 
         /**
          * Key for symbol passed from
-         * [SelectFirstCurrencyActivity][vorotilenko.trendanalyzer.activities.select.SelectFirstCurrencyActivity]
+         * [ObservedSymbolsActivity][vorotilenko.trendanalyzer.activities.observedsymbols.ObservedSymbolsActivity]
          */
         const val SYMBOL = "symbol"
 

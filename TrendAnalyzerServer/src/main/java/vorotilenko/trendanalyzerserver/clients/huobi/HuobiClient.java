@@ -4,9 +4,8 @@ import com.huobi.client.MarketClient;
 import com.huobi.client.req.market.SubMarketTradeRequest;
 import com.huobi.constant.HuobiOptions;
 import vorotilenko.trendanalyzerserver.ExchangeNames;
-import vorotilenko.trendanalyzerserver.Symbols;
+import vorotilenko.trendanalyzerserver.Currencies;
 import vorotilenko.trendanalyzerserver.clients.ExchangeClient;
-import vorotilenko.trendanalyzerserver.clients.TradeInfo;
 import vorotilenko.trendanalyzerserver.dbinteraction.DBInteraction;
 import vorotilenko.trendanalyzerserver.dbinteraction.DatabaseSender;
 import vorotilenko.trendanalyzerserver.dbinteraction.everytrade.EveryTradeSender;
@@ -15,7 +14,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class HuobiClient extends ExchangeClient {
 
@@ -33,11 +31,6 @@ public class HuobiClient extends ExchangeClient {
     private final List<DatabaseSender> databaseSenders = new ArrayList<>();
 
     /**
-     * Logger
-     */
-    private final Logger logger = Logger.getLogger(this.getClass().getName());
-
-    /**
      * Class implements Standalone pattern
      */
     private HuobiClient(){}
@@ -50,14 +43,15 @@ public class HuobiClient extends ExchangeClient {
     }
 
     /**
-     * Subscribes to updates by the specified symbol
+     * Subscribes to updates by the passed symbol
      * @param symbol Symbol which has to be observed
+     * @param huobiId Huobi ID in the Database
      */
     private void subscToUpdates(String symbol, short huobiId) {
         MarketClient marketClient = MarketClient.create(new HuobiOptions());
         final DatabaseSender sender;
         try {
-            sender = new EveryTradeSender(huobiId, 20);
+            sender = new EveryTradeSender(huobiId, 1);
         } catch (SQLException e) {
             e.printStackTrace();
             return;
@@ -65,20 +59,8 @@ public class HuobiClient extends ExchangeClient {
         databaseSenders.add(sender);
         marketClient.subMarketTrade(
                 SubMarketTradeRequest.builder().symbol(symbol.toLowerCase()).build(),
-                (marketTradeEvent) -> {
-
-                    marketTradeEvent.getList().forEach(marketTrade -> {
-                        long timestamp = marketTrade.getTs();
-                        double price = marketTrade.getPrice().doubleValue();
-                        // Sending data to the DB
-                        sender.putData(symbol, timestamp, price);
-                        // Sending data to listeners
-                        TradeInfo tradeInfo =
-                                new TradeInfo(symbol, timestamp, price, ExchangeNames.HUOBI);
-                        notifyTradeInfoListeners(tradeInfo);
-                        //logger.info("Huobi:\n" + marketTrade);
-                    });
-                });
+                new HuobiTradeCallback(symbol, sender, this)
+        );
     }
 
     /**
@@ -90,16 +72,12 @@ public class HuobiClient extends ExchangeClient {
             throw new RuntimeException(String.format(
                     "Exchange %s was not found in the DB", ExchangeNames.HUOBI));
         }
-        subscToUpdates(Symbols.BTCUSDT, huobiId);
-        subscToUpdates(Symbols.ETHUSDT, huobiId);
-        subscToUpdates(Symbols.ADAUSDT, huobiId);
-        subscToUpdates(Symbols.XRPUSDT, huobiId);
-        subscToUpdates(Symbols.DOTUSDT, huobiId);
-        subscToUpdates(Symbols.UNIUSDT, huobiId);
-        subscToUpdates(Symbols.BCHUSDT, huobiId);
-        subscToUpdates(Symbols.LTCUSDT, huobiId);
-        subscToUpdates(Symbols.SOLUSDT, huobiId);
-        subscToUpdates(Symbols.LINKUSDT, huobiId);
+        for (String firstCurrency : Currencies.getArray()) {
+            for (String secondCurrency : Currencies.getArray()) {
+                if (!firstCurrency.equals(secondCurrency))
+                    subscToUpdates(firstCurrency + secondCurrency, huobiId);
+            }
+        }
     }
 
     @Override

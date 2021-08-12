@@ -1,12 +1,14 @@
 package vorotilenko.trendanalyzerserver.server;
 
+import vorotilenko.trendanalyzerserver.Currencies;
+
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Class for storing exchange names and symbols associated with these exchange names.
  * {@link vorotilenko.trendanalyzerserver.ExchangeNames ExchangeNames} have to be used as the keys.
- * {@link vorotilenko.trendanalyzerserver.Symbols Symbols} have to be used as the values
+ * Symbols created by concatenation of {@link Currencies Currencies} have to be used as the values
  */
 public class ExchangeMap extends ConcurrentHashMap<String, Set<String>> {
 

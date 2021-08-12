@@ -11,12 +11,12 @@ public class TradesAccumulator implements Closeable {
     /**
      * The default number of datasets after which the submission occurs
      */
-    private static final int DEFAULT_MAX_DATASETS_NUM = 200;
+    private static final int DEFAULT_MAX_DATASETS_NUM = 10;
 
     /**
      * The sending data to the DB thread
      */
-    private AsyncDataSender sender = null;
+    private AsyncDataSender sender;
 
     /**
      * An array in which datasets are accumulated to be sent to the DB

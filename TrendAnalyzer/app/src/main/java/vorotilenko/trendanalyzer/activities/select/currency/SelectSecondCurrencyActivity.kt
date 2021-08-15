@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.widget.EditText
 import androidx.recyclerview.widget.RecyclerView
 import vorotilenko.trendanalyzer.R
-import vorotilenko.trendanalyzer.activities.observedsymbols.ObservedListItem
+import vorotilenko.trendanalyzer.activities.ObservedSymbol
 import vorotilenko.trendanalyzer.activities.observedsymbols.ObservedSymbolsActivity.Companion.NEW_ITEM
 import vorotilenko.trendanalyzer.activities.select.SearchBarWatcher
 import vorotilenko.trendanalyzer.serverinteraction.Currencies
@@ -25,7 +25,7 @@ class SelectSecondCurrencyActivity : AppCompatActivity() {
      * Sets adapter to the RecyclerView
      * @return Created adapter
      */
-    private fun setRVAdapter(observedItem: ObservedListItem?): CurrenciesAdapter {
+    private fun setRVAdapter(observedItem: ObservedSymbol?): CurrenciesAdapter {
         val rvCurrenciesList = findViewById<RecyclerView>(R.id.rvCurrenciesList)
         val adapter = CurrenciesAdapter(applicationContext, shownCurrencies) { currency, _ ->
             observedItem?.apply {
@@ -44,7 +44,7 @@ class SelectSecondCurrencyActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_select_first_currency)
 
-        val observedItem = intent.extras?.getParcelable<ObservedListItem>(NEW_ITEM)
+        val observedItem = intent.extras?.getParcelable<ObservedSymbol>(NEW_ITEM)
         val exchangeName = observedItem?.exchangeName
 
         title = resources.getString(R.string.select_2nd_currency)

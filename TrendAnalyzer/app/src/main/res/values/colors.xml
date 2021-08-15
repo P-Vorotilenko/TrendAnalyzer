@@ -16,4 +16,14 @@
     <color name="xAxisLabelsTextColor">#99FFFFFF</color>
     <color name="colorPrimary">#141D29</color>
     <color name="darkBlue">#101822</color>
+
+    <color name="chart_color_2">#03DA40</color>
+    <color name="chart_color_3">#0384DA</color>
+    <color name="chart_color_4">#DAD603</color>
+    <color name="chart_color_5">#6F03DA</color>
+    <color name="chart_color_6">#DA5903</color>
+    <color name="chart_color_7">#DA03D6</color>
+    <color name="chart_color_8">#DA1C03</color>
+    <color name="chart_color_9">#DA0335</color>
+    <color name="chart_color_10">#03DA6B</color>
 </resources>

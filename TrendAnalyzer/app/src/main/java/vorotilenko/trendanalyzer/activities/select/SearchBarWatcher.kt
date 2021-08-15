@@ -4,12 +4,13 @@ import android.annotation.SuppressLint
 import android.text.Editable
 import android.text.TextWatcher
 import androidx.recyclerview.widget.RecyclerView
+import vorotilenko.trendanalyzer.activities.select.exchange.SelectExchangeActivity
+import vorotilenko.trendanalyzer.activities.select.currency.SelectFirstCurrencyActivity
+import vorotilenko.trendanalyzer.activities.select.currency.SelectSecondCurrencyActivity
 
 /**
- * Listener for search bar in
- * [SelectExchangeActivity][vorotilenko.trendanalyzer.activities.select.exchange.SelectExchangeActivity]
- * and
- * [SelectFirstCurrencyActivity][vorotilenko.trendanalyzer.activities.select.currency.SelectFirstCurrencyActivity]
+ * Listener for search bar in [SelectExchangeActivity], [SelectFirstCurrencyActivity] and
+ * [SelectSecondCurrencyActivity]
  */
 class SearchBarWatcher<T : ListItem>(
     private val shownListItems: MutableList<T>,

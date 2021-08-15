@@ -13,12 +13,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-//        val prefs = getSharedPreferences(Constants.LISTENED_SYMBOLS, MODE_PRIVATE)
-//        val intent = if (prefs.contains(Constants.LISTENED_SYMBOLS))
-//            Intent(applicationContext, ObservedSymbolsActivity::class.java)
-//        else
-//            Intent(applicationContext, ChartActivity::class.java)
-        val intent = Intent(applicationContext, ObservedSymbolsActivity::class.java)
+        val observedSymbols = getSharedPreferences(Constants.LISTENED_SYMBOLS, MODE_PRIVATE)
+            .getString(Constants.LISTENED_SYMBOLS, "[]")
+        val intent = if (observedSymbols != "[]")
+            Intent(applicationContext, ChartActivity::class.java)
+        else
+            Intent(applicationContext, ObservedSymbolsActivity::class.java)
         startActivity(intent)
     }
 }

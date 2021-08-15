@@ -1,6 +1,7 @@
 package vorotilenko.trendanalyzer.serverinteraction
 
 import android.os.Handler
+import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import org.glassfish.tyrus.client.ClientManager
@@ -13,20 +14,17 @@ import javax.websocket.Session
 import kotlin.concurrent.thread
 
 @ClientEndpoint
-class WSClientEndpoint(private val handler: Handler) {
+class WSClientEndpoint(
+    private val handler: Handler,
+    private val symbolsMap: Map<String, List<String>>
+) {
 
     /**
      * Called when a connection to the server is opened
      */
     @OnOpen
     fun onOpen(session: Session) {
-        val symbols =
-            arrayOf(Currencies.getSymbol(Currencies.BITCOIN, Currencies.TETHER) ?: "BTCUSDT")
-        val exchangeMap = HashMap<String, Array<String>>()
-        exchangeMap[ExchangeNames.BINANCE] = symbols
-        exchangeMap[ExchangeNames.HUOBI] = symbols
-        val message = ClientMessage(ClientMessageTypes.SUBSCRIBE_TO_UPD, gson.toJson(exchangeMap))
-        message.messageType
+        val message = ClientMessage(ClientMessageTypes.SUBSCRIBE_TO_UPD, gson.toJson(symbolsMap))
         session.asyncRemote.sendText(gson.toJson(message))
     }
 
@@ -38,12 +36,12 @@ class WSClientEndpoint(private val handler: Handler) {
         val serverMessage = gson.fromJson(message, ServerMessage::class.java)
         when (serverMessage.messageType) {
             ServerMessageTypes.INIT -> {
-                val tradeInfoList: List<List<TradeInfo?>?>? =
+                val tradeInfoList: List<List<TradeInfo?>?> =
                     gson.fromJson(serverMessage.message, tradeInfoListType)
                 tradeInfoList
-                    ?.filterNotNull()
-                    ?.filter { it.isNotEmpty() }
-                    ?.forEach { list ->
+                    .filterNotNull()
+                    .filterNot { it.isEmpty() }
+                    .forEach { list ->
                         val filteredList = list.filterNotNull()
                         if (filteredList.isNotEmpty()) {
                             val handlerMessage =
@@ -58,6 +56,10 @@ class WSClientEndpoint(private val handler: Handler) {
                     handler.obtainMessage(ServerMessageTypes.NORMAL_MESSAGE, tradeInfo)
                 handler.sendMessage(handlerMessage)
             }
+            ServerMessageTypes.INFO -> {
+                val messageStr = gson.fromJson(serverMessage.message, String::class.java)
+                Log.i("Trend Analyzer", "Message from server: $messageStr")
+            }
         }
     }
 
@@ -66,20 +68,22 @@ class WSClientEndpoint(private val handler: Handler) {
          * Object for parsing JSON
          */
         private val gson = Gson()
+
         /**
          * The type of list sent by the server. For parsing JSON
          */
-        private val tradeInfoListType = object : TypeToken<List<List<TradeInfo?>?>?>(){}.type
+        private val tradeInfoListType = object : TypeToken<List<List<TradeInfo?>?>?>() {}.type
 
         /**
          * Starts the client
          */
-        fun start(handler: Handler) {
+        fun start(handler: Handler, symbolsMap: Map<String, List<String>>) {
             thread {
                 val client = ClientManager.createClient()
                 client.connectToServer(
-                    WSClientEndpoint(handler),
-                    URI("ws://192.168.0.104:8025/taserver"))
+                    WSClientEndpoint(handler, symbolsMap),
+                    URI("ws://192.168.0.104:8025/taserver")
+                )
             }
         }
     }

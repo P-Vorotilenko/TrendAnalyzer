@@ -9,15 +9,16 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import vorotilenko.trendanalyzer.R
+import vorotilenko.trendanalyzer.activities.ObservedSymbol
 
 /**
  * Adapter for RecyclerView in [ObservedSymbolsActivity]
  */
 class ObservedAdapter(
     val context: Context,
-    private val listItems: MutableList<ObservedListItem>,
-    private val afterItemDelete: ((position: Int, item: ObservedListItem?) -> Unit)? = null,
-    private val afterUndoDeletion: ((position: Int, item: ObservedListItem?) -> Unit)? = null
+    private val listItems: MutableList<ObservedSymbol>,
+    private val afterItemDelete: ((position: Int, item: ObservedSymbol?) -> Unit)? = null,
+    private val afterUndoDeletion: ((position: Int, item: ObservedSymbol?) -> Unit)? = null
 ) : RecyclerView.Adapter<ObservedAdapter.ViewHolder>() {
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
@@ -25,7 +26,7 @@ class ObservedAdapter(
     /**
      * Reference to item deleted by user. In case the user wants to undo deletion
      */
-    private var recentlyDeletedItem: ObservedListItem? = null
+    private var recentlyDeletedItem: ObservedSymbol? = null
     /**
      * Position of item deleted by user. In case the user wants to undo deletion
      */

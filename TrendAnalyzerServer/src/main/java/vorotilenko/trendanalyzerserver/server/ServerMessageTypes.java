@@ -12,4 +12,8 @@ public class ServerMessageTypes {
      * Normal message
      */
     public static final int NORMAL_MESSAGE = 1;
+    /**
+     * String with information about client-server interaction
+     */
+    public static final int INFO = 2;
 }

@@ -12,4 +12,8 @@ object ServerMessageTypes {
      * Normal message
      */
     const val NORMAL_MESSAGE = 1
+    /**
+     * String with information about client-server interaction
+     */
+    const val INFO = 2
 }

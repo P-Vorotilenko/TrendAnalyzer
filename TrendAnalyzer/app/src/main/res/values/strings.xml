@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">TrendAnalyzer</string>
+    <string name="app_name">Trend Analyzer</string>
     <string name="fab_content_description">Add symbol</string>
     <string name="no_symbols_observed">No symbols are currently observed</string>
     <string name="loading">Loading</string>
@@ -15,4 +15,6 @@
     </string>
     <string name="symbol_removed">Symbol removed</string>
     <string name="undo">Undo</string>
+    <string name="observed_symbols">Observed symbols</string>
+    <string name="loading_data">Loading data</string>
 </resources>

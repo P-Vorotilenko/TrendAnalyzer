@@ -18,7 +18,6 @@ class WSClientEndpoint(
     private val handler: Handler,
     private val symbolsMap: Map<String, List<String>>
 ) {
-
     /**
      * Called when a connection to the server is opened
      */
@@ -26,6 +25,7 @@ class WSClientEndpoint(
     fun onOpen(session: Session) {
         val message = ClientMessage(ClientMessageTypes.SUBSCRIBE_TO_UPD, gson.toJson(symbolsMap))
         session.asyncRemote.sendText(gson.toJson(message))
+        Companion.session = session
     }
 
     /**
@@ -72,19 +72,56 @@ class WSClientEndpoint(
         /**
          * The type of list sent by the server. For parsing JSON
          */
-        private val tradeInfoListType = object : TypeToken<List<List<TradeInfo?>?>?>() {}.type
+        private val tradeInfoListType = object : TypeToken<List<List<TradeInfo?>?>>() {}.type
+
+        /**
+         * Connected session
+         */
+        @Volatile
+        private var session: Session? = null
+
+        /**
+         * Flag which informs if the server is started
+         */
+        @Volatile
+        private var started = false
 
         /**
          * Starts the client
          */
         fun start(handler: Handler, symbolsMap: Map<String, List<String>>) {
-            thread {
-                val client = ClientManager.createClient()
-                client.connectToServer(
-                    WSClientEndpoint(handler, symbolsMap),
-                    URI("ws://192.168.0.104:8025/taserver")
-                )
+            if (!started) {
+                synchronized(this) {
+                    if (!started) {
+                        thread {
+                            val client = ClientManager.createClient()
+                            client.connectToServer(
+                                WSClientEndpoint(handler, symbolsMap),
+                                URI("ws://192.168.0.104:8025/taserver")
+                            )
+                        }
+                        started = true
+                    }
+                }
             }
+        }
+
+        /**
+         * Adds new updates
+         */
+        fun addUpdates(exchange: String, symbol: String) {
+            val map = mapOf(exchange to setOf(symbol))
+            val message = ClientMessage(ClientMessageTypes.ADD_UPD, gson.toJson(map))
+            thread { session?.asyncRemote?.sendText(gson.toJson(message)) }
+        }
+
+        /**
+         * Removes updates
+         */
+        fun removeUpdates(exchange: String, symbol: String) {
+            val map = mapOf(exchange to setOf(symbol))
+            val message = ClientMessage(ClientMessageTypes.REMOVE_UPD, gson.toJson(map))
+            thread { session?.asyncRemote?.sendText(gson.toJson(message)) }
         }
     }
 }

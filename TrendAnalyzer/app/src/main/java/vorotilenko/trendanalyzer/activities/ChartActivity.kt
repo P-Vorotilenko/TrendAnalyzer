@@ -1,12 +1,15 @@
 package vorotilenko.trendanalyzer.activities
 
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.Matrix
 import android.graphics.RectF
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
+import android.widget.ImageButton
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.Legend
@@ -19,14 +22,13 @@ import com.google.gson.Gson
 import vorotilenko.trendanalyzer.Constants
 import vorotilenko.trendanalyzer.R
 import vorotilenko.trendanalyzer.TradeInfo
+import vorotilenko.trendanalyzer.activities.observedsymbols.ObservedSymbolsActivity
 import vorotilenko.trendanalyzer.serverinteraction.ServerMessageTypes
 import vorotilenko.trendanalyzer.serverinteraction.WSClientEndpoint
 import java.lang.ref.WeakReference
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
-import vorotilenko.trendanalyzer.activities.observedsymbols.ObservedSymbolsActivity
 
 class ChartActivity : AppCompatActivity() {
     /**
@@ -38,6 +40,28 @@ class ChartActivity : AppCompatActivity() {
      * The time from which the time of all transactions is counted
      */
     private var startTradeTime = System.currentTimeMillis()
+
+    /**
+     * Launcher for [ObservedSymbolsActivity]
+     */
+    private val observedSymbolsLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK)
+                removeRedundantDatasets()
+        }
+
+    /**
+     * Compares shown datasets with preferences. Removes datasets which are not
+     * written in preferences from chart
+     */
+    private fun removeRedundantDatasets() {
+        val jsonList = getSharedPreferences(Constants.LISTENED_SYMBOLS, MODE_PRIVATE)
+            .getString(Constants.LISTENED_SYMBOLS, "[]")
+        val symbolsInPreferences: ArrayList<ObservedSymbol> =
+            gson.fromJson(jsonList, Constants.OBSERVED_SYMBOLS_LIST_TYPE)
+        val labels = symbolsInPreferences.map { "${it.symbolTicker} ${it.exchangeName}" }
+        chart.data.dataSets.removeAll { !labels.contains(it.label) }
+    }
 
     /**
      * Gets color of dataset from preferences
@@ -54,6 +78,39 @@ class ChartActivity : AppCompatActivity() {
         return item!!.colorOnChart
     }
 
+    private fun createDataSet(entries: List<Entry>, label: String, color: Int) =
+        LineDataSet(entries, label)
+            .apply {
+                this.color = color
+                valueTextColor = Color.WHITE
+                setDrawVerticalHighlightIndicator(false)
+                lineWidth = 1f
+                setDrawCircles(false)
+            }
+
+    /**
+     * Adds dataset to [LineData] in [chart]. If chart.data is null, creates new LineData and
+     * attaches it to chart
+     */
+    private fun addToLineData(dataSet: LineDataSet) {
+        // Chart doesn't work normally if we initialize it with empty LineData
+        if (chart.data == null) {
+            val data = LineData(dataSet)
+            data.setDrawValues(false)
+            chart.data = data
+        } else
+            chart.data.addDataSet(dataSet)
+    }
+
+    /**
+     * Calls functions to notify chart about changes and invalidate it
+     */
+    private fun invalidateChart() {
+        chart.data.notifyDataChanged()
+        chart.notifyDataSetChanged()
+        chart.invalidate()
+    }
+
     /**
      * Adds dataset to the chart
      */
@@ -66,27 +123,13 @@ class ChartActivity : AppCompatActivity() {
 
         val exchange = tradeInfoList[0].exchange
         val symbol = tradeInfoList[0].symbol
-        val dataSet =
-            LineDataSet(entries, "$symbol $exchange")
-                .apply {
-                    color = Color.CYAN
-                    valueTextColor = Color.WHITE
-                    setDrawVerticalHighlightIndicator(false)
-                    lineWidth = 1f
-                    setDrawCircles(false)
-                }
-        // Chart doesn't work normally if we initialize it with empty LineData
-        if (chart.data == null) {
-            val data = LineData(dataSet)
-            data.setDrawValues(false)
-            chart.data = data
-        } else {
-            dataSet.color = getDatasetColor(exchange, symbol)
-            chart.data.addDataSet(dataSet)
-        }
-        chart.data.notifyDataChanged()
-        chart.notifyDataSetChanged()
-        chart.invalidate()
+        val dataSet = createDataSet(
+            entries,
+            "$symbol $exchange",
+            getDatasetColor(exchange, symbol)
+        )
+        addToLineData(dataSet)
+        invalidateChart()
     }
 
     /**
@@ -186,6 +229,7 @@ class ChartActivity : AppCompatActivity() {
             .getString(Constants.LISTENED_SYMBOLS, "[]")
         val observedSymbols: ArrayList<ObservedSymbol> =
             gson.fromJson(json, Constants.OBSERVED_SYMBOLS_LIST_TYPE)
+        @Suppress("UNCHECKED_CAST")
         return observedSymbols
             .groupBy { it.exchangeName }
             .filterKeys { it != null }
@@ -209,21 +253,83 @@ class ChartActivity : AppCompatActivity() {
             isAutoScaleMinMaxEnabled = true
             legend.form = Legend.LegendForm.CIRCLE
             setDrawBorders(false)
+            setNoDataText(resources.getString(R.string.loading_data))
+            setNoDataTextColor(ContextCompat.getColor(applicationContext, R.color.teal_200))
         }
 
+        if (clientEndpointHandler == null)
+            clientEndpointHandler = ClientEndpointHandler(this)
+        else
+            clientEndpointHandler!!.chartActivity = this
         val observedSymbolsMap = getObservedSymbolsMap()
+        WSClientEndpoint.start(clientEndpointHandler!!, observedSymbolsMap)
 
-        //TODO: it has to be optimized
-        clientEndpointHandler = ClientEndpointHandler(this)
-        WSClientEndpoint.start(clientEndpointHandler, observedSymbolsMap)
+        findViewById<ImageButton>(R.id.listBtn).setOnClickListener {
+            val intent = Intent(applicationContext, ObservedSymbolsActivity::class.java)
+            observedSymbolsLauncher.launch(intent)
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putInt(DATASETS_COUNT, chart.data.dataSetCount)
+        var count = 0
+        chart.data.dataSets.forEach { dataSet ->
+            outState.putString("$DATASET_LABEL$count", dataSet.label)
+            outState.putInt("$DATASET_COLOR$count", dataSet.color)
+
+            val entriesCount = dataSet.entryCount
+            val arrayList = ArrayList<Entry?>(entriesCount)
+            for (i in 0 until entriesCount)
+                arrayList.add(dataSet.getEntryForIndex(i))
+            outState.putParcelableArrayList("$DATASET${count++}", arrayList)
+        }
+        super.onSaveInstanceState(outState)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        val datasetsCount: Int? = savedInstanceState[DATASETS_COUNT] as Int?
+        if (datasetsCount == null || datasetsCount <= 0)
+            return
+        for (i in 0 until datasetsCount) {
+            val entries = savedInstanceState.getParcelableArrayList<Entry>("$DATASET$i")
+            val label = savedInstanceState["$DATASET_LABEL$i"] as String?
+            val color = savedInstanceState["$DATASET_COLOR$i"] as Int?
+            if (entries != null && label != null && color != null)
+                addToLineData(createDataSet(entries, label, color))
+        }
+        invalidateChart()
     }
 
     override fun onDestroy() {
-        clientEndpointHandler.removeCallbacksAndMessages(null)
+        clientEndpointHandler?.removeCallbacksAndMessages(null)
         super.onDestroy()
     }
 
     companion object {
+        /**
+         * Key for datasets count in [onSaveInstanceState] and [onRestoreInstanceState]
+         */
+        private const val DATASETS_COUNT = "datasetsCount"
+
+        /**
+         * Key for datasets in [onSaveInstanceState] and [onRestoreInstanceState].
+         * Has to be concatenated with number
+         */
+        private const val DATASET = "dataset"
+
+        /**
+         * Key for dataset labels in [onSaveInstanceState] and [onRestoreInstanceState].
+         * Has to be concatenated with number
+         */
+        private const val DATASET_LABEL = "datasetLabel"
+
+        /**
+         * Key for dataset colors in [onSaveInstanceState] and [onRestoreInstanceState].
+         * Has to be concatenated with number
+         */
+        private const val DATASET_COLOR = "datasetColor"
+
         /**
          * Chart grid line width
          */
@@ -251,7 +357,15 @@ class ChartActivity : AppCompatActivity() {
             /**
              * Weak reference to Activity passed in the constructor
              */
-            private val wrActivity: WeakReference<ChartActivity> = WeakReference(chartActivity)
+            private var wrActivity: WeakReference<ChartActivity> = WeakReference(chartActivity)
+
+            /**
+             * Chart activity
+             */
+            var chartActivity: ChartActivity? = null
+                set(value) {
+                    wrActivity = WeakReference(value)
+                }
 
             override fun handleMessage(msg: Message) {
                 val chartActivity = wrActivity.get()
@@ -266,6 +380,6 @@ class ChartActivity : AppCompatActivity() {
                 }
             }
         }
-        private lateinit var clientEndpointHandler: ClientEndpointHandler
+        private var clientEndpointHandler: ClientEndpointHandler? = null
     }
 }

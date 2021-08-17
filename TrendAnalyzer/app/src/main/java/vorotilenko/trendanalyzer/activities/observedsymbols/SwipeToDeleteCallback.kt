@@ -1,7 +1,6 @@
 package vorotilenko.trendanalyzer.activities.observedsymbols
 
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -22,9 +21,7 @@ class SwipeToDeleteCallback(private val adapter: ObservedAdapter) :
         recyclerView: RecyclerView,
         viewHolder: RecyclerView.ViewHolder,
         target: RecyclerView.ViewHolder
-    ): Boolean {
-        return false
-    }
+    ) = false
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
         adapter.deleteItem(viewHolder.adapterPosition)

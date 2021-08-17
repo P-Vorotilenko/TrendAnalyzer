@@ -17,6 +17,7 @@ import vorotilenko.trendanalyzer.Constants
 import vorotilenko.trendanalyzer.R
 import vorotilenko.trendanalyzer.activities.ObservedSymbol
 import vorotilenko.trendanalyzer.activities.select.exchange.SelectExchangeActivity
+import vorotilenko.trendanalyzer.serverinteraction.WSClientEndpoint
 import kotlin.random.Random
 
 class ObservedSymbolsActivity : AppCompatActivity() {
@@ -27,26 +28,36 @@ class ObservedSymbolsActivity : AppCompatActivity() {
      */
     private lateinit var adapter: ObservedAdapter
 
+    /**
+     * Launcher for [SelectExchangeActivity]
+     */
     private val selectActivitiesLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == RESULT_OK) {
-                val newItem: ObservedSymbol? = result.data?.extras?.getParcelable(NEW_ITEM)
-                if (newItem == null) {
-                    Toast.makeText(
-                        applicationContext,
-                        R.string.err_selecting_symbol,
-                        Toast.LENGTH_LONG
-                    ).show()
-                } else if (!observedSymbols.contains(newItem)) {
-                    setItemColor(newItem)
-                    observedSymbols.add(newItem)
-                    findViewById<TextView>(R.id.tvNothingObserved).visibility = View.INVISIBLE
-                    findViewById<RecyclerView>(R.id.rvObservedSymbols).visibility = View.VISIBLE
-                    adapter.notifyItemInserted(observedSymbols.size - 1)
-                    saveToPrefs()
-                }
+            if (result.resultCode != RESULT_OK)
+                return@registerForActivityResult
+            val newItem: ObservedSymbol? = result.data?.extras?.getParcelable(NEW_ITEM)
+            if (newItem == null)
+                showWarningToast()
+            else if (!observedSymbols.contains(newItem)) {
+                setItemColor(newItem)
+                observedSymbols.add(newItem)
+                adapter.notifyItemInserted(observedSymbols.size - 1)
+                handleItemAdded(observedSymbols.size - 1, newItem)
+                finish()
             }
         }
+
+    /**
+     * Shows warning when item received from [SelectExchangeActivity] in
+     * [selectActivitiesLauncher] is null
+     */
+    private fun showWarningToast() {
+        Toast.makeText(
+            applicationContext,
+            R.string.err_selecting_symbol,
+            Toast.LENGTH_LONG
+        ).show()
+    }
 
     /**
      * Sets values to color components
@@ -143,7 +154,8 @@ class ObservedSymbolsActivity : AppCompatActivity() {
     }
 
     /**
-     * Passed to [adapter] for [ObservedAdapter.afterItemDelete]
+     * Saves list to preferences, sets visibility of views,
+     * says [WSClientEndpoint] to remove updates and sets activity result to OK
      */
     private fun handleItemDeleted(position: Int, item: ObservedSymbol?) {
         saveToPrefs()
@@ -151,10 +163,16 @@ class ObservedSymbolsActivity : AppCompatActivity() {
             findViewById<RecyclerView>(R.id.rvObservedSymbols).visibility = View.INVISIBLE
             findViewById<TextView>(R.id.tvNothingObserved).visibility = View.VISIBLE
         }
+        val exchangeName = item?.exchangeName
+        val symbolTicker = item?.symbolTicker
+        if (exchangeName != null && symbolTicker != null)
+            WSClientEndpoint.removeUpdates(exchangeName, symbolTicker)
+        setResult(RESULT_OK)
     }
 
     /**
-     * Passed to [adapter] for [ObservedAdapter.afterUndoDeletion]
+     * Saves list to preferences, sets visibility of views,
+     * says [WSClientEndpoint] to add updates and sets activity result to OK
      */
     private fun handleItemAdded(position: Int, item: ObservedSymbol?) {
         saveToPrefs()
@@ -162,6 +180,11 @@ class ObservedSymbolsActivity : AppCompatActivity() {
             findViewById<RecyclerView>(R.id.rvObservedSymbols).visibility = View.VISIBLE
             findViewById<TextView>(R.id.tvNothingObserved).visibility = View.INVISIBLE
         }
+        val exchangeName = item?.exchangeName
+        val symbolTicker = item?.symbolTicker
+        if (exchangeName != null && symbolTicker != null)
+            WSClientEndpoint.addUpdates(exchangeName, symbolTicker)
+        setResult(RESULT_OK)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -57,7 +57,7 @@ class WSClientEndpoint(
                 handler.sendMessage(handlerMessage)
             }
             ServerMessageTypes.INFO -> {
-                val messageStr = gson.fromJson(serverMessage.message, String::class.java)
+                val messageStr = serverMessage.message
                 Log.i("Trend Analyzer", "Message from server: $messageStr")
             }
         }

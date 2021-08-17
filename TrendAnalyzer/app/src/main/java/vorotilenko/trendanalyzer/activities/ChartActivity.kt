@@ -7,6 +7,7 @@ import android.graphics.RectF
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
+import android.util.Log
 import android.widget.ImageButton
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -35,11 +36,6 @@ class ChartActivity : AppCompatActivity() {
      * Chart
      */
     private lateinit var chart: LineChart
-
-    /**
-     * The time from which the time of all transactions is counted
-     */
-    private var startTradeTime = System.currentTimeMillis()
 
     /**
      * Launcher for [ObservedSymbolsActivity]
@@ -208,14 +204,17 @@ class ChartActivity : AppCompatActivity() {
         vpHandler.refresh(matrix, chart, true)
     }
 
+    /**
+     * Adds value to the chart
+     */
     fun addEntry(tradeInfo: TradeInfo) {
         val tradeInfoLabel = "${tradeInfo.symbol} ${tradeInfo.exchange}"
-        chart.data?.dataSets?.forEach {
-            if (it.label == tradeInfoLabel) {
-                val x = (tradeInfo.tradeTimeMillis - startTradeTime).toFloat()
+        val dataSet = chart.data?.dataSets?.firstOrNull { it.label == tradeInfoLabel }
+        dataSet?.let {
+            val x = (tradeInfo.tradeTimeMillis - startTradeTime).toFloat()
+            if (x > dataSet.xMax) {
                 val y = tradeInfo.price.toFloat()
-                addEntryDynamic(x, y, it as LineDataSet)
-                return@forEach
+                addEntryDynamic(x, y, dataSet as LineDataSet)
             }
         }
     }
@@ -336,6 +335,11 @@ class ChartActivity : AppCompatActivity() {
         private const val GRID_LINE_WIDTH = 1.5f
 
         /**
+         * The time from which the time of all transactions is counted
+         */
+        private val startTradeTime = System.currentTimeMillis()
+
+        /**
          * Date format to be shown under the chart
          */
         private val dateFormat: DateFormat = SimpleDateFormat(
@@ -362,13 +366,13 @@ class ChartActivity : AppCompatActivity() {
             /**
              * Chart activity
              */
-            var chartActivity: ChartActivity? = null
+            var chartActivity: ChartActivity?
+                get() = wrActivity.get()
                 set(value) {
                     wrActivity = WeakReference(value)
                 }
 
             override fun handleMessage(msg: Message) {
-                val chartActivity = wrActivity.get()
                 when (msg.what) {
                     ServerMessageTypes.INIT -> {
                         @Suppress("UNCHECKED_CAST")

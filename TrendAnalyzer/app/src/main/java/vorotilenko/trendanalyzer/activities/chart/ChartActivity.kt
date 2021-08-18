@@ -15,6 +15,7 @@ import androidx.core.content.ContextCompat
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.data.DataSet
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
@@ -22,7 +23,6 @@ import com.github.mikephil.charting.formatter.IAxisValueFormatter
 import com.google.gson.Gson
 import vorotilenko.trendanalyzer.Constants
 import vorotilenko.trendanalyzer.R
-import vorotilenko.trendanalyzer.TradeData
 import vorotilenko.trendanalyzer.TradeInfo
 import vorotilenko.trendanalyzer.activities.ObservedSymbol
 import vorotilenko.trendanalyzer.activities.observedsymbols.ObservedSymbolsActivity
@@ -51,20 +51,20 @@ class ChartActivity : AppCompatActivity() {
     private val observedSymbolsLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK)
-                removeRedundantDatasets()
+                removeRedundantDataSets()
         }
 
     /**
      * Stores data about trades. Key - label as it is presented in datasets of [chart].
      * Value - list of [TradeData]
      */
-    private val tradesMap = TradesMap()
+    private val tradesMap = TradesMap(startTradeTime)
 
     /**
      * Compares shown datasets with preferences. Removes datasets which are not
      * written in preferences from chart
      */
-    private fun removeRedundantDatasets() {
+    private fun removeRedundantDataSets() {
         val jsonList = getSharedPreferences(Constants.LISTENED_SYMBOLS, MODE_PRIVATE)
             .getString(Constants.LISTENED_SYMBOLS, "[]")
         val symbolsInPreferences: ArrayList<ObservedSymbol> =
@@ -76,7 +76,7 @@ class ChartActivity : AppCompatActivity() {
     /**
      * Gets color of dataset from preferences
      */
-    private fun getDatasetColor(exchange: String, symbol: String): Int {
+    private fun getDataSetColor(exchange: String, symbol: String): Int {
         val listJson =
             getSharedPreferences(Constants.LISTENED_SYMBOLS, MODE_PRIVATE)
                 .getString(Constants.LISTENED_SYMBOLS, null)
@@ -127,7 +127,7 @@ class ChartActivity : AppCompatActivity() {
     private fun addDataSet(tradeInfoList: List<TradeInfo>) {
         val entries = tradeInfoList.map {
             val x = (it.tradeTimeMillis - startTradeTime).toFloat()
-            val y = it.price.toFloat()
+            val y = 0.5f
             Entry(x, y)
         }
 
@@ -136,9 +136,10 @@ class ChartActivity : AppCompatActivity() {
         val dataSet = createDataSet(
             entries,
             "$symbol $exchange",
-            getDatasetColor(exchange, symbol)
+            getDataSetColor(exchange, symbol)
         )
         addToLineData(dataSet)
+        setYCoordinates()
         invalidateChart()
     }
 
@@ -148,7 +149,7 @@ class ChartActivity : AppCompatActivity() {
     private fun adjustAxes(chart: LineChart) {
         chart.axisRight.apply {
             setDrawAxisLine(false)
-            setDrawLabels(false)
+            //setDrawLabels(false)
             gridColor = ContextCompat.getColor(applicationContext, R.color.gridColor)
             gridLineWidth = GRID_LINE_WIDTH
             setDrawZeroLine(false)
@@ -160,7 +161,7 @@ class ChartActivity : AppCompatActivity() {
             setDrawAxisLine(false)
             gridColor = ContextCompat.getColor(applicationContext, R.color.gridColor)
             gridLineWidth = GRID_LINE_WIDTH
-            textColor = ContextCompat.getColor(applicationContext, R.color.gridColor)
+            textColor = ContextCompat.getColor(applicationContext, R.color.xAxisLabelsTextColor)
             textSize = 9.0f
             valueFormatter = IAxisValueFormatter { value, _ ->
                 dateFormat.format(Date(startTradeTime + value.toLong()))
@@ -191,13 +192,13 @@ class ChartActivity : AppCompatActivity() {
     /**
      * Dynamically adding values to the chart
      */
-    private fun addEntryDynamic(x: Float, y: Float, dataSet: LineDataSet) {
+    private fun addEntryDynamic(x: Float, dataSet: LineDataSet) {
         // Max X that is currently displayed on the chart
         val maxVisibleX = chart.highestVisibleX
         // Min X that is currently displayed on the chart
         val minVisibleX = chart.lowestVisibleX
         // Adding new value
-        dataSet.addEntry(Entry(x, y))
+        dataSet.addEntry(Entry(x, 0.5f))
         chart.data.notifyDataChanged()
         chart.notifyDataSetChanged()
         // Getting new max visible X
@@ -215,7 +216,38 @@ class ChartActivity : AppCompatActivity() {
         matrix.postScale((newMaxVisibleX - newMinVisibleX) / (maxVisibleX - minVisibleX),
             0f, contentRect.width() + vpHandler.offsetLeft(), 0f)
         // Applying changes
-        vpHandler.refresh(matrix, chart, true)
+        vpHandler.refresh(matrix, chart, false)
+    }
+
+    /**
+     * Sets the Y-coordinates of all visible points on the chart so that each
+     * dataset takes up optimal space
+     */
+    private fun setYCoordinates() {
+        val minVisibleX = chart.lowestVisibleX
+        chart.data?.dataSets?.forEach { dataSet ->
+            tradesMap[dataSet.label]?.let { tradesList ->
+                var maxPrice = Double.MIN_VALUE
+                var minPrice = Double.MAX_VALUE
+                val firstVisibleEntryIndex =
+                    dataSet.getEntryIndex(minVisibleX, 0.5f, DataSet.Rounding.CLOSEST)
+                tradesList.subList(firstVisibleEntryIndex, tradesList.size)
+                    .forEach {
+                        val price = it.price
+                        if (price > maxPrice)
+                            maxPrice = price
+                        if (price < minPrice)
+                            minPrice = price
+                    }
+                val scatter = maxPrice - minPrice
+                val delta = minPrice / scatter
+                val entryCount = dataSet.entryCount
+                for (i in firstVisibleEntryIndex until entryCount) {
+                    dataSet.getEntryForIndex(i).y =
+                        (tradesList[i].price / scatter - delta).toFloat()
+                }
+            }
+        }
     }
 
     /**
@@ -227,8 +259,9 @@ class ChartActivity : AppCompatActivity() {
         dataSet?.let {
             val x = (tradeInfo.tradeTimeMillis - startTradeTime).toFloat()
             if (x > dataSet.xMax) {
-                val y = tradeInfo.price.toFloat()
-                addEntryDynamic(x, y, dataSet as LineDataSet)
+                addEntryDynamic(x, dataSet as LineDataSet)
+                setYCoordinates()
+                invalidateChart()
             }
         }
     }
@@ -298,31 +331,48 @@ class ChartActivity : AppCompatActivity() {
         }
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        if (chart.data == null) {
-            super.onSaveInstanceState(outState)
-            return
+    /**
+     * Saves chart data to [outState]
+     */
+    private fun saveChartData(outState: Bundle) {
+        chart.data?.let { chartData ->
+            outState.putInt(DATASETS_COUNT, chartData.dataSetCount)
+            for (i in chartData.dataSets.indices) {
+                val dataSet = chartData.dataSets[i]
+                outState.putString("$DATASET_LABEL$i", dataSet.label)
+                outState.putInt("$DATASET_COLOR$i", dataSet.color)
+                val entriesCount = dataSet.entryCount
+                val arrayList = ArrayList<Entry?>(entriesCount)
+                for (j in 0 until entriesCount)
+                    arrayList.add(dataSet.getEntryForIndex(j))
+                outState.putParcelableArrayList("$DATASET$i", arrayList)
+            }
         }
-        outState.putInt(DATASETS_COUNT, chart.data.dataSetCount)
-        var count = 0
-        chart.data.dataSets.forEach { dataSet ->
-            outState.putString("$DATASET_LABEL$count", dataSet.label)
-            outState.putInt("$DATASET_COLOR$count", dataSet.color)
+    }
 
-            val entriesCount = dataSet.entryCount
-            val arrayList = ArrayList<Entry?>(entriesCount)
-            for (i in 0 until entriesCount)
-                arrayList.add(dataSet.getEntryForIndex(i))
-            outState.putParcelableArrayList("$DATASET${count++}", arrayList)
+    /**
+     * Saves [tradesMap] to [outState]
+     */
+    private fun saveTradesMap(outState: Bundle) {
+        val tradesMapKeys = tradesMap.keys
+        if (!tradesMapKeys.isNullOrEmpty()) {
+            outState.putStringArray(TRADES_MAP_KEYS, tradesMapKeys.toTypedArray())
+            tradesMap.entries.forEach { outState.putParcelableArrayList(it.key, it.value) }
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        saveChartData(outState)
+        saveTradesMap(outState)
         super.onSaveInstanceState(outState)
     }
 
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
+    /**
+     * Restores chart data from [savedInstanceState]
+     */
+    private fun restoreChartData(savedInstanceState: Bundle) {
         val datasetsCount: Int? = savedInstanceState[DATASETS_COUNT] as Int?
-        if (datasetsCount == null || datasetsCount <= 0)
-            return
+        if (datasetsCount == null || datasetsCount <= 0) return
         for (i in 0 until datasetsCount) {
             val entries = savedInstanceState.getParcelableArrayList<Entry>("$DATASET$i")
             val label = savedInstanceState["$DATASET_LABEL$i"] as String?
@@ -330,6 +380,25 @@ class ChartActivity : AppCompatActivity() {
             if (entries != null && label != null && color != null)
                 addToLineData(createDataSet(entries, label, color))
         }
+    }
+
+    /**
+     * Restores [tradesMap] from [savedInstanceState]
+     */
+    private fun restoreTradesMap(savedInstanceState: Bundle) {
+        savedInstanceState.getStringArray(TRADES_MAP_KEYS)?.let { tradesMapKeys ->
+            tradesMapKeys.forEach { key ->
+                savedInstanceState.getParcelableArrayList<TradeData>(key)?.let { list ->
+                    tradesMap[key] = list
+                }
+            }
+        }
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        restoreChartData(savedInstanceState)
+        restoreTradesMap(savedInstanceState)
         invalidateChart()
     }
 
@@ -361,6 +430,12 @@ class ChartActivity : AppCompatActivity() {
          * Has to be concatenated with number
          */
         private const val DATASET_COLOR = "datasetColor"
+
+        /**
+         * Key for the list of keys of [tradesMap].
+         * Used in [onSaveInstanceState] and [onRestoreInstanceState]
+         */
+        private const val TRADES_MAP_KEYS = "tradesMapKeys"
 
         /**
          * Chart grid line width
@@ -408,11 +483,21 @@ class ChartActivity : AppCompatActivity() {
             override fun handleMessage(msg: Message) {
                 when (msg.what) {
                     ServerMessageTypes.INIT -> {
-                        @Suppress("UNCHECKED_CAST")
-                        chartActivity?.addDataSet(msg.obj as List<TradeInfo>)
+                        val activity = chartActivity
+                        activity?.let {
+                            @Suppress("UNCHECKED_CAST")
+                            val list = msg.obj as List<TradeInfo>
+                            it.tradesMap.add(list)
+                            it.addDataSet(list)
+                        }
                     }
                     ServerMessageTypes.NORMAL_MESSAGE -> {
-                        chartActivity?.addEntry(msg.obj as TradeInfo)
+                        val activity = chartActivity
+                        activity?.let {
+                            val tradeInfo = msg.obj as TradeInfo
+                            it.tradesMap.add(tradeInfo)
+                            it.addEntry(tradeInfo)
+                        }
                     }
                 }
             }

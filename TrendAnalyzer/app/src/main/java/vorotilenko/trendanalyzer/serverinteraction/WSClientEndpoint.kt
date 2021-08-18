@@ -7,10 +7,7 @@ import com.google.gson.reflect.TypeToken
 import org.glassfish.tyrus.client.ClientManager
 import vorotilenko.trendanalyzer.TradeInfo
 import java.net.URI
-import javax.websocket.ClientEndpoint
-import javax.websocket.OnMessage
-import javax.websocket.OnOpen
-import javax.websocket.Session
+import javax.websocket.*
 import kotlin.concurrent.thread
 
 @ClientEndpoint
@@ -104,6 +101,16 @@ class WSClientEndpoint(
                     }
                 }
             }
+        }
+
+        /**
+         * Stops the client
+         */
+        fun stop() {
+            session?.close(
+                CloseReason(CloseReason.CloseCodes.NORMAL_CLOSURE, "session ended.")
+            )
+            started = false
         }
 
         /**

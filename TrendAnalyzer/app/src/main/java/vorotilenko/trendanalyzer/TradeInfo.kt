@@ -1,7 +1,7 @@
 package vorotilenko.trendanalyzer
 
 /**
- * Stores data about trades
+ * Stores data about trades including time, price, symbol and exchange
  */
 data class TradeInfo(
     /**

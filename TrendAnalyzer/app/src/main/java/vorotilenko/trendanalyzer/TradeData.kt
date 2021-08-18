@@ -1,7 +1,7 @@
 package vorotilenko.trendanalyzer
 
 /**
- * Storing trade data for separate trades
+ * Stores data about trades including only time and price
  */
 data class TradeData(
         /**
@@ -9,7 +9,7 @@ data class TradeData(
          */
         val tradeTimeMillis: Long,
         /**
-         * Trade price
+         * Price of the trade
          */
         val price: Double
 )

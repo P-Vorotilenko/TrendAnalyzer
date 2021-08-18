@@ -17,4 +17,5 @@
     <string name="undo">Undo</string>
     <string name="observed_symbols">Observed symbols</string>
     <string name="loading_data">Loading data</string>
+    <string name="press_once_again">Press once again to exit</string>
 </resources>

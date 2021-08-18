@@ -16,17 +16,26 @@ import com.google.gson.Gson
 import vorotilenko.trendanalyzer.Constants
 import vorotilenko.trendanalyzer.R
 import vorotilenko.trendanalyzer.activities.ObservedSymbol
+import vorotilenko.trendanalyzer.activities.chart.ChartActivity
 import vorotilenko.trendanalyzer.activities.select.exchange.SelectExchangeActivity
 import vorotilenko.trendanalyzer.serverinteraction.WSClientEndpoint
 import kotlin.random.Random
 
 class ObservedSymbolsActivity : AppCompatActivity() {
+    /**
+     * Symbols observed by user
+     */
     private lateinit var observedSymbols: ArrayList<ObservedSymbol>
 
     /**
      * Adapter for the RecyclerView
      */
     private lateinit var adapter: ObservedAdapter
+
+    /**
+     * Array which contains flags of what colors (for viewing data in [ChartActivity]) are free
+     */
+    private val colorIsFree = BooleanArray(10) { true }
 
     /**
      * Launcher for [SelectExchangeActivity]
@@ -102,17 +111,17 @@ class ObservedSymbolsActivity : AppCompatActivity() {
      * Sets the color of this symbol on chart
      */
     private fun setItemColor(item: ObservedSymbol) {
-        item.colorOnChart = when (observedSymbols.size) {
-            0 -> ContextCompat.getColor(applicationContext, R.color.teal_200)
-            1 -> ContextCompat.getColor(applicationContext, R.color.chart_color_2)
-            2 -> ContextCompat.getColor(applicationContext, R.color.chart_color_3)
-            3 -> ContextCompat.getColor(applicationContext, R.color.chart_color_4)
-            4 -> ContextCompat.getColor(applicationContext, R.color.chart_color_5)
-            5 -> ContextCompat.getColor(applicationContext, R.color.chart_color_6)
-            6 -> ContextCompat.getColor(applicationContext, R.color.chart_color_7)
-            7 -> ContextCompat.getColor(applicationContext, R.color.chart_color_8)
-            8 -> ContextCompat.getColor(applicationContext, R.color.chart_color_9)
-            9 -> ContextCompat.getColor(applicationContext, R.color.chart_color_10)
+        item.colorOnChart = when {
+            colorIsFree[0] -> ContextCompat.getColor(applicationContext, R.color.teal_200)
+            colorIsFree[1] -> ContextCompat.getColor(applicationContext, R.color.chart_color_2)
+            colorIsFree[2] -> ContextCompat.getColor(applicationContext, R.color.chart_color_3)
+            colorIsFree[3] -> ContextCompat.getColor(applicationContext, R.color.chart_color_4)
+            colorIsFree[4] -> ContextCompat.getColor(applicationContext, R.color.chart_color_5)
+            colorIsFree[5] -> ContextCompat.getColor(applicationContext, R.color.chart_color_6)
+            colorIsFree[6] -> ContextCompat.getColor(applicationContext, R.color.chart_color_7)
+            colorIsFree[7] -> ContextCompat.getColor(applicationContext, R.color.chart_color_8)
+            colorIsFree[8] -> ContextCompat.getColor(applicationContext, R.color.chart_color_9)
+            colorIsFree[9] -> ContextCompat.getColor(applicationContext, R.color.chart_color_10)
             else -> getRandomItemColor()
         }
     }
@@ -128,6 +137,67 @@ class ObservedSymbolsActivity : AppCompatActivity() {
     }
 
     /**
+     * Sets corresponding flag in [colorIsFree] to false
+     */
+    private fun setColorToBusy(observedSymbol: ObservedSymbol?) {
+        when (observedSymbol?.colorOnChart) {
+            ContextCompat.getColor(applicationContext, R.color.teal_200) ->
+                colorIsFree[0] = false
+            ContextCompat.getColor(applicationContext, R.color.chart_color_2) ->
+                colorIsFree[1] = false
+            ContextCompat.getColor(applicationContext, R.color.chart_color_3) ->
+                colorIsFree[2] = false
+            ContextCompat.getColor(applicationContext, R.color.chart_color_4) ->
+                colorIsFree[3] = false
+            ContextCompat.getColor(applicationContext, R.color.chart_color_5) ->
+                colorIsFree[4] = false
+            ContextCompat.getColor(applicationContext, R.color.chart_color_6) ->
+                colorIsFree[5] = false
+            ContextCompat.getColor(applicationContext, R.color.chart_color_7) ->
+                colorIsFree[6] = false
+            ContextCompat.getColor(applicationContext, R.color.chart_color_8) ->
+                colorIsFree[7] = false
+            ContextCompat.getColor(applicationContext, R.color.chart_color_9) ->
+                colorIsFree[8] = false
+            ContextCompat.getColor(applicationContext, R.color.chart_color_10) ->
+                colorIsFree[9] = false
+        }
+    }
+
+    /**
+     * Sets corresponding flag in [colorIsFree] to true
+     */
+    private fun setColorToFree(observedSymbol: ObservedSymbol?) {
+        when (observedSymbol?.colorOnChart) {
+            ContextCompat.getColor(applicationContext, R.color.teal_200) ->
+                colorIsFree[0] = true
+            ContextCompat.getColor(applicationContext, R.color.chart_color_2) ->
+                colorIsFree[1] = true
+            ContextCompat.getColor(applicationContext, R.color.chart_color_3) ->
+                colorIsFree[2] = true
+            ContextCompat.getColor(applicationContext, R.color.chart_color_4) ->
+                colorIsFree[3] = true
+            ContextCompat.getColor(applicationContext, R.color.chart_color_5) ->
+                colorIsFree[4] = true
+            ContextCompat.getColor(applicationContext, R.color.chart_color_6) ->
+                colorIsFree[5] = true
+            ContextCompat.getColor(applicationContext, R.color.chart_color_7) ->
+                colorIsFree[6] = true
+            ContextCompat.getColor(applicationContext, R.color.chart_color_8) ->
+                colorIsFree[7] = true
+            ContextCompat.getColor(applicationContext, R.color.chart_color_9) ->
+                colorIsFree[8] = true
+            ContextCompat.getColor(applicationContext, R.color.chart_color_10) ->
+                colorIsFree[9] = true
+        }
+    }
+
+    /**
+     * Initializes [colorIsFree]. Has to be called after [observedSymbols] is initialized
+     */
+    private fun initFreeColorsArray() = observedSymbols.forEach { setColorToBusy(it) }
+
+    /**
      * Initialization when savedInstanceState is null
      */
     private fun commonInit(rvObservedSymbols: RecyclerView) {
@@ -135,6 +205,7 @@ class ObservedSymbolsActivity : AppCompatActivity() {
             getSharedPreferences(Constants.LISTENED_SYMBOLS, MODE_PRIVATE)
                 .getString(Constants.LISTENED_SYMBOLS, "[]")
         observedSymbols = gson.fromJson(observedSymbolsJson, Constants.OBSERVED_SYMBOLS_LIST_TYPE)
+        initFreeColorsArray()
         if (observedSymbols.isEmpty()) {
             findViewById<TextView>(R.id.tvNothingObserved).visibility = View.VISIBLE
             rvObservedSymbols.visibility = View.INVISIBLE
@@ -151,6 +222,7 @@ class ObservedSymbolsActivity : AppCompatActivity() {
         observedSymbols =
             savedInstanceState.getParcelableArrayList<ObservedSymbol>(OBSERVED_SYMBOLS)
                     as ArrayList<ObservedSymbol>
+        initFreeColorsArray()
     }
 
     /**
@@ -159,6 +231,7 @@ class ObservedSymbolsActivity : AppCompatActivity() {
      */
     private fun handleItemDeleted(position: Int, item: ObservedSymbol?) {
         saveToPrefs()
+        setColorToFree(item)
         if (observedSymbols.isEmpty()) {
             findViewById<RecyclerView>(R.id.rvObservedSymbols).visibility = View.INVISIBLE
             findViewById<TextView>(R.id.tvNothingObserved).visibility = View.VISIBLE
@@ -176,6 +249,7 @@ class ObservedSymbolsActivity : AppCompatActivity() {
      */
     private fun handleItemAdded(position: Int, item: ObservedSymbol?) {
         saveToPrefs()
+        setColorToBusy(item)
         if (observedSymbols.size == 1) {
             findViewById<RecyclerView>(R.id.rvObservedSymbols).visibility = View.VISIBLE
             findViewById<TextView>(R.id.tvNothingObserved).visibility = View.INVISIBLE

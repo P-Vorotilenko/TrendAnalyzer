@@ -42,24 +42,16 @@ class ObservedSymbol(
         return if (
             other != null &&
             this.exchangeName == (other as ObservedSymbol).exchangeName &&
-            this.exchangeLogo == other.exchangeLogo &&
             this.symbolName == other.symbolName &&
-            this.symbolTicker == other.symbolTicker &&
-            this.currency1Logo == other.currency1Logo &&
-            this.currency2Logo == other.currency2Logo &&
-            this.colorOnChart == other.colorOnChart
+            this.symbolTicker == other.symbolTicker
         ) true
         else super.equals(other)
     }
 
     override fun hashCode(): Int {
         var result = exchangeName?.hashCode() ?: 0
-        result = 31 * result + exchangeLogo
         result = 31 * result + (symbolName?.hashCode() ?: 0)
         result = 31 * result + (symbolTicker?.hashCode() ?: 0)
-        result = 31 * result + currency1Logo
-        result = 31 * result + currency2Logo
-        result = 31 * result + colorOnChart
         return result
     }
 

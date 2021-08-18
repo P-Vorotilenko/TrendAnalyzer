@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import vorotilenko.trendanalyzer.Constants
 import vorotilenko.trendanalyzer.R
+import vorotilenko.trendanalyzer.activities.chart.ChartActivity
 import vorotilenko.trendanalyzer.activities.observedsymbols.ObservedSymbolsActivity
 
 class MainActivity : AppCompatActivity() {

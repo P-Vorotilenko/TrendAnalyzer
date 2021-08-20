@@ -2,6 +2,7 @@ package vorotilenko.trendanalyzer.activities.select.currency
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.MenuItem
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
@@ -49,7 +50,7 @@ class SelectFirstCurrencyActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_select_first_currency)
+        setContentView(R.layout.activity_select_currency)
 
         val observedItem = intent.extras?.getParcelable<ObservedSymbol>(NEW_ITEM)
         val exchangeName = observedItem?.exchangeName
@@ -59,13 +60,24 @@ class SelectFirstCurrencyActivity : AppCompatActivity() {
         }.toTypedArray()
         shownCurrencies = availableCurrencies.toMutableList()
 
-        title = resources.getString(R.string.select_1st_currency)
-
         val adapter = setRVAdapter(observedItem)
 
         val etCurrencyName = findViewById<EditText>(R.id.etCurrencyName)
         val textChangedListener = SearchBarWatcher(shownCurrencies, allCurrencies, adapter)
         etCurrencyName.addTextChangedListener(textChangedListener)
+
+        setSupportActionBar(findViewById(R.id.select_currency_toolbar))
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                onBackPressed()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     companion object {

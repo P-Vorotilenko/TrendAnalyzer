@@ -3,6 +3,8 @@ package vorotilenko.trendanalyzer.activities.observedsymbols
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
@@ -277,9 +279,27 @@ class ObservedSymbolsActivity : AppCompatActivity() {
         val itemTouchHelper = ItemTouchHelper(SwipeToDeleteCallback(adapter))
         itemTouchHelper.attachToRecyclerView(rvObservedSymbols)
 
-        findViewById<FloatingActionButton>(R.id.addSymbolBtn).setOnClickListener {
-            val intent = Intent(applicationContext, SelectExchangeActivity::class.java)
-            selectActivitiesLauncher.launch(intent)
+        setSupportActionBar(findViewById(R.id.observed_toolbar))
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_observed_symbols, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_add_symbol -> {
+                val intent = Intent(applicationContext, SelectExchangeActivity::class.java)
+                selectActivitiesLauncher.launch(intent)
+                true
+            }
+            android.R.id.home -> {
+                onBackPressed()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 

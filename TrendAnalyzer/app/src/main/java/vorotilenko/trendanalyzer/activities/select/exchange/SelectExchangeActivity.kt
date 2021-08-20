@@ -3,6 +3,7 @@ package vorotilenko.trendanalyzer.activities.select.exchange
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MenuItem
 import android.widget.EditText
 import androidx.recyclerview.widget.RecyclerView
 import vorotilenko.trendanalyzer.R
@@ -33,8 +34,6 @@ class SelectExchangeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_select_exchange)
 
-        title = resources.getString(R.string.select_exchange)
-
         val rvExchangesList = findViewById<RecyclerView>(R.id.rvExchangesList)
         val adapter = ExchangesAdapter(applicationContext, shownExchanges) { exchange, _ ->
             currencyActivityLauncher.launch(
@@ -49,6 +48,19 @@ class SelectExchangeActivity : AppCompatActivity() {
         etExchangeName.addTextChangedListener(
             SearchBarWatcher(shownExchanges, allExchanges, adapter)
         )
+
+        setSupportActionBar(findViewById(R.id.select_exchange_toolbar))
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                onBackPressed()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     companion object {

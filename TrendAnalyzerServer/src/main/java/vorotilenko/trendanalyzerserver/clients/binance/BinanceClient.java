@@ -114,7 +114,7 @@ public class BinanceClient extends ExchangeClient {
         logger.info(String.format("Session %s closed because: %s",
                 session.getId(), closeReason));
         // Stream closes automatically every 24 hours,
-        // so work has to be started again after stop
+        // so work has to be restarted
         //start();
     }
 

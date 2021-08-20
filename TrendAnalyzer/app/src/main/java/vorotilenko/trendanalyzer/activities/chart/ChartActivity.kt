@@ -116,7 +116,7 @@ class ChartActivity : AppCompatActivity() {
      * Calls functions to notify chart about changes and invalidate it
      */
     private fun invalidateChart() {
-        chart.data.notifyDataChanged()
+        chart.data?.notifyDataChanged()
         chart.notifyDataSetChanged()
         chart.invalidate()
     }

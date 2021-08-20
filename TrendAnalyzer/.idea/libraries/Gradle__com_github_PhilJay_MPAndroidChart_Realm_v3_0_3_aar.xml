@@ -1,9 +1,9 @@
 <component name="libraryTable">
   <library name="Gradle: com.github.PhilJay:MPAndroidChart-Realm:v3.0.3@aar">
     <CLASSES>
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/1df8ca04a4484b2ac27ff590f418fa18/transformed/jetified-MPAndroidChart-Realm-v3.0.3/res" />
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/1df8ca04a4484b2ac27ff590f418fa18/transformed/jetified-MPAndroidChart-Realm-v3.0.3/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/1df8ca04a4484b2ac27ff590f418fa18/transformed/jetified-MPAndroidChart-Realm-v3.0.3/AndroidManifest.xml" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/9f4b7e3002f8bbb3da80dc73d88571ec/transformed/jetified-MPAndroidChart-Realm-v3.0.3/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/9f4b7e3002f8bbb3da80dc73d88571ec/transformed/jetified-MPAndroidChart-Realm-v3.0.3/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/9f4b7e3002f8bbb3da80dc73d88571ec/transformed/jetified-MPAndroidChart-Realm-v3.0.3/jars/classes.jar!/" />
     </CLASSES>
     <JAVADOC>
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.PhilJay/MPAndroidChart-Realm/v3.0.3/b6d2cf4ae98dbb7c2a7e30a747c0d4b11512ab53/MPAndroidChart-Realm-v3.0.3-javadoc.jar!/" />

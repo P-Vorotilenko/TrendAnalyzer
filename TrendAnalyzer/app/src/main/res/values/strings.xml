@@ -1,13 +1,13 @@
 <resources>
     <string name="app_name">Trend Analyzer</string>
-    <string name="fab_content_description">Add symbol</string>
+    <string name="add_symbol">Add symbol</string>
     <string name="no_symbols_observed">No symbols are currently observed</string>
     <string name="loading">Loading</string>
     <string name="search">Search…</string>
     <string name="logo">Logo</string>
-    <string name="select_exchange">Please, select the exchange</string>
-    <string name="select_1st_currency">Please, select the first currency</string>
-    <string name="select_2nd_currency">Please, select the second currency</string>
+    <string name="select_exchange">Select exchange</string>
+    <string name="select_1st_currency">Select first currency</string>
+    <string name="select_2nd_currency">Select second currency</string>
     <string name="err_selecting_exchange">Something went wrong while selecting exchange</string>
     <string name="err_selecting_currency">Something went wrong while selecting currency</string>
     <string name="err_selecting_symbol">

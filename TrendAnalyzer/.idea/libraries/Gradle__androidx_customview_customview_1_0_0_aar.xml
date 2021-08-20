@@ -3,9 +3,10 @@
     <CLASSES>
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/ab0f485b37698db5152c988f6183f19e/customview-1.0.0/res" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-3/89143209a977d79858f335bbecbe5df9/transformed/customview-1.0.0/res" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/d352a740c4a7999e0211689b3cd53bac/transformed/customview-1.0.0/AndroidManifest.xml" />
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/d352a740c4a7999e0211689b3cd53bac/transformed/customview-1.0.0/jars/classes.jar!/" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-3/d352a740c4a7999e0211689b3cd53bac/transformed/customview-1.0.0/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/3ec2dcd339cbbe9416c1a4b9c1d65f54/transformed/customview-1.0.0/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/3ec2dcd339cbbe9416c1a4b9c1d65f54/transformed/customview-1.0.0/AndroidManifest.xml" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/3ec2dcd339cbbe9416c1a4b9c1d65f54/transformed/customview-1.0.0/res" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

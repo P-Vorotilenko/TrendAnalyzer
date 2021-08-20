@@ -7,6 +7,10 @@
     tools:context=".activities.select.exchange.SelectExchangeActivity"
     android:background="@color/colorPrimary">
 
+    <include
+        layout="@layout/toolbar"
+        android:id="@+id/select_exchange_toolbar" />
+
     <EditText
         android:id="@+id/etExchangeName"
         android:layout_width="0dp"
@@ -22,7 +26,7 @@
         app:layout_constraintBottom_toTopOf="@id/rvExchangesList"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/select_exchange_toolbar" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvExchangesList"

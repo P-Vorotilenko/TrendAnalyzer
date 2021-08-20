@@ -18,12 +18,12 @@
 
     <ImageButton
         android:id="@+id/listBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="15dp"
+        android:layout_width="0dp"
+        android:layout_height="?attr/actionBarSize"
+        app:layout_constraintDimensionRatio="1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/baseline_list_white_48"
+        app:srcCompat="@drawable/baseline_list_white_36"
         android:background="@android:color/transparent"
         android:contentDescription="@string/observed_symbols" />
 

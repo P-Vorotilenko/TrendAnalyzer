@@ -16,4 +16,12 @@ object ServerMessageTypes {
      * String with information about client-server interaction
      */
     const val INFO = 2
+    /**
+     * Error while connecting to server
+     */
+    const val CONNECTION_ERROR = 3
+    /**
+     * Server started
+     */
+    const val SERVER_STARTED = 4
 }

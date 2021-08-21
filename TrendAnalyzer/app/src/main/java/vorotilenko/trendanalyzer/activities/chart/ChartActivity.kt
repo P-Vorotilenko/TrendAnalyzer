@@ -7,7 +7,11 @@ import android.graphics.RectF
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
+import android.util.Log
+import android.view.View
 import android.widget.ImageButton
+import android.widget.ProgressBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -65,12 +69,14 @@ class ChartActivity : AppCompatActivity() {
      * written in preferences from chart
      */
     private fun removeRedundantDataSets() {
+        val chartData = chart.data ?: return
         val jsonList = getSharedPreferences(Constants.LISTENED_SYMBOLS, MODE_PRIVATE)
             .getString(Constants.LISTENED_SYMBOLS, "[]")
         val symbolsInPreferences: ArrayList<ObservedSymbol> =
             gson.fromJson(jsonList, Constants.OBSERVED_SYMBOLS_LIST_TYPE)
         val labels = symbolsInPreferences.map { "${it.symbolTicker} ${it.exchangeName}" }
-        chart.data.dataSets.removeAll { !labels.contains(it.label) }
+        chartData.dataSets.removeAll { !labels.contains(it.label) }
+        if (chartData.dataSetCount == 0) chart.data = null
     }
 
     /**
@@ -92,10 +98,11 @@ class ChartActivity : AppCompatActivity() {
         LineDataSet(entries, label)
             .apply {
                 this.color = color
-                valueTextColor = Color.WHITE
+                //valueTextColor = Color.WHITE
                 setDrawVerticalHighlightIndicator(false)
                 lineWidth = 1f
                 setDrawCircles(false)
+                setDrawValues(false)
             }
 
     /**
@@ -299,7 +306,7 @@ class ChartActivity : AppCompatActivity() {
             isAutoScaleMinMaxEnabled = true
             legend.form = Legend.LegendForm.CIRCLE
             setDrawBorders(false)
-            setNoDataText(resources.getString(R.string.loading_data))
+            setNoDataText(resources.getString(R.string.pls_select_symbols))
             setNoDataTextColor(ContextCompat.getColor(applicationContext, R.color.teal_200))
         }
 
@@ -314,6 +321,55 @@ class ChartActivity : AppCompatActivity() {
             val intent = Intent(applicationContext, ObservedSymbolsActivity::class.java)
             observedSymbolsLauncher.launch(intent)
         }
+    }
+
+    /**
+     * Sets views visibility in case of connection error
+     */
+    private fun setViewsVisibilityConnectionError() {
+        chart.visibility = View.INVISIBLE
+        findViewById<ImageButton>(R.id.listBtn).visibility = View.INVISIBLE
+        findViewById<ProgressBar>(R.id.chartProgressBar).visibility = View.INVISIBLE
+        findViewById<TextView>(R.id.tvServerUnavailable).visibility = View.VISIBLE
+    }
+
+    /**
+     * Sets views visibility in case of loading
+     */
+    private fun setViewsVisibilityLoading() {
+        Log.d("IIAI04", "LOADING\nWaited symbols: ${WSClientEndpoint.waitedSymbols}")
+        chart.visibility = View.INVISIBLE
+        findViewById<ImageButton>(R.id.listBtn).visibility = View.INVISIBLE
+        findViewById<ProgressBar>(R.id.chartProgressBar).visibility = View.VISIBLE
+        findViewById<TextView>(R.id.tvServerUnavailable).visibility = View.INVISIBLE
+    }
+
+    /**
+     * Sets views visibility in case of normal work
+     */
+    private fun setViewsVisibilityNormal() {
+        chart.visibility = View.VISIBLE
+        findViewById<ImageButton>(R.id.listBtn).visibility = View.VISIBLE
+        findViewById<ProgressBar>(R.id.chartProgressBar).visibility = View.INVISIBLE
+        findViewById<TextView>(R.id.tvServerUnavailable).visibility = View.INVISIBLE
+    }
+
+    /**
+     * Sets visibility of the chart, progress bar and no connection message
+     */
+    private fun setViewsVisibility() {
+        when {
+            WSClientEndpoint.wasConnectionError -> setViewsVisibilityConnectionError()
+            !WSClientEndpoint.started ||
+                    ((chart.data == null || chart.data.dataSetCount == 0) &&
+                            WSClientEndpoint.waitedSymbols > 0) -> setViewsVisibilityLoading()
+            else -> setViewsVisibilityNormal()
+        }
+    }
+
+    override fun onResume() {
+        setViewsVisibility()
+        super.onResume()
     }
 
     override fun onBackPressed() {
@@ -480,17 +536,14 @@ class ChartActivity : AppCompatActivity() {
                     wrActivity = WeakReference(value)
                 }
 
+            private fun setViewsVisibilityNormalIfNeeded(chartActivity: ChartActivity) {
+                val chartData = chartActivity.chart.data
+                if (chartData != null && chartData.dataSetCount == 1)
+                    chartActivity.setViewsVisibilityNormal()
+            }
+
             override fun handleMessage(msg: Message) {
                 when (msg.what) {
-                    ServerMessageTypes.INIT -> {
-                        val activity = chartActivity
-                        activity?.let {
-                            @Suppress("UNCHECKED_CAST")
-                            val list = msg.obj as List<TradeInfo>
-                            it.tradesMap.add(list)
-                            it.addDataSet(list)
-                        }
-                    }
                     ServerMessageTypes.NORMAL_MESSAGE -> {
                         val activity = chartActivity
                         activity?.let {
@@ -499,6 +552,20 @@ class ChartActivity : AppCompatActivity() {
                             it.addEntry(tradeInfo)
                         }
                     }
+                    ServerMessageTypes.INIT -> {
+                        val activity = chartActivity
+                        activity?.let {
+                            @Suppress("UNCHECKED_CAST")
+                            val list = msg.obj as List<TradeInfo>
+                            it.tradesMap.add(list)
+                            it.addDataSet(list)
+                            setViewsVisibilityNormalIfNeeded(it)
+                        }
+                    }
+                    ServerMessageTypes.SERVER_STARTED ->
+                        chartActivity?.setViewsVisibility()
+                    ServerMessageTypes.CONNECTION_ERROR ->
+                        chartActivity?.setViewsVisibilityConnectionError()
                 }
             }
         }

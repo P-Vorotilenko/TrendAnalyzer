@@ -2,6 +2,7 @@
     <string name="app_name">Trend Analyzer</string>
     <string name="add_symbol">Add symbol</string>
     <string name="no_symbols_observed">No symbols are currently observed</string>
+    <string name="pls_select_symbols">Please select the symbols you want to watch</string>
     <string name="loading">Loading</string>
     <string name="search">Search…</string>
     <string name="logo">Logo</string>
@@ -18,4 +19,7 @@
     <string name="observed_symbols">Observed symbols</string>
     <string name="loading_data">Loading data</string>
     <string name="press_once_again">Press once again to exit</string>
+    <string name="server_unavailable">
+        The server is unavailable at the moment. Try to restart the application later.
+    </string>
 </resources>

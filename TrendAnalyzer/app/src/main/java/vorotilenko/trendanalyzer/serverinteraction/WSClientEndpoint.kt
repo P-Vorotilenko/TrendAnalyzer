@@ -5,6 +5,7 @@ import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import org.glassfish.tyrus.client.ClientManager
+import org.glassfish.tyrus.client.ClientProperties
 import vorotilenko.trendanalyzer.TradeInfo
 import java.net.URI
 import javax.websocket.*
@@ -35,8 +36,7 @@ class WSClientEndpoint(
             ServerMessageTypes.INIT -> {
                 val tradeInfoList: List<List<TradeInfo?>?> =
                     gson.fromJson(serverMessage.message, tradeInfoListType)
-                tradeInfoList
-                    .filterNotNull()
+                tradeInfoList.filterNotNull()
                     .filterNot { it.isEmpty() }
                     .forEach { list ->
                         val filteredList = list.filterNotNull()
@@ -45,6 +45,7 @@ class WSClientEndpoint(
                                 handler.obtainMessage(ServerMessageTypes.INIT, filteredList)
                             handler.sendMessage(handlerMessage)
                         }
+                        waitedSymbols--
                     }
             }
             ServerMessageTypes.NORMAL_MESSAGE -> {
@@ -54,8 +55,7 @@ class WSClientEndpoint(
                 handler.sendMessage(handlerMessage)
             }
             ServerMessageTypes.INFO -> {
-                val messageStr = serverMessage.message
-                Log.i("Trend Analyzer", "Message from server: $messageStr")
+                Log.i("Trend Analyzer", "Message from server: ${serverMessage.message}")
             }
         }
     }
@@ -81,7 +81,44 @@ class WSClientEndpoint(
          * Flag which informs if the server is started
          */
         @Volatile
-        private var started = false
+        var started = false
+            private set
+
+        /**
+         * Flag which informs if there was a connection error
+         */
+        @Volatile
+        var wasConnectionError = false
+            private set
+
+        /**
+         * Count of symbols which wait for initial data
+         */
+        @Volatile
+        var waitedSymbols = 0
+            private set
+
+        private fun startClient(handler: Handler, symbolsMap: Map<String, List<String>>) {
+            symbolsMap.values.forEach { list -> waitedSymbols += list.size }
+            //TODO: optimize
+            thread {
+                val client = ClientManager.createClient()
+//                client.properties[ClientProperties.HANDSHAKE_TIMEOUT] = 10000
+                try {
+                    client.connectToServer(
+                        WSClientEndpoint(handler, symbolsMap),
+                        URI("ws://78.31.180.192:8025/taserver")
+                    )
+                    started = true
+                    val handlerMessage = handler.obtainMessage(ServerMessageTypes.SERVER_STARTED)
+                    handler.sendMessage(handlerMessage)
+                } catch (e: DeploymentException) {
+                    wasConnectionError = true
+                    val handlerMessage = handler.obtainMessage(ServerMessageTypes.CONNECTION_ERROR)
+                    handler.sendMessage(handlerMessage)
+                }
+            }
+        }
 
         /**
          * Starts the client
@@ -89,16 +126,8 @@ class WSClientEndpoint(
         fun start(handler: Handler, symbolsMap: Map<String, List<String>>) {
             if (!started) {
                 synchronized(this) {
-                    if (!started) {
-                        thread {
-                            val client = ClientManager.createClient()
-                            client.connectToServer(
-                                WSClientEndpoint(handler, symbolsMap),
-                                URI("ws://192.168.0.104:8025/taserver")
-                            )
-                        }
-                        started = true
-                    }
+                    if (!started)
+                        startClient(handler, symbolsMap)
                 }
             }
         }
@@ -119,6 +148,8 @@ class WSClientEndpoint(
         fun addUpdates(exchange: String, symbol: String) {
             val map = mapOf(exchange to setOf(symbol))
             val message = ClientMessage(ClientMessageTypes.ADD_UPD, gson.toJson(map))
+            waitedSymbols++
+            // TODO: optimize
             thread { session?.asyncRemote?.sendText(gson.toJson(message)) }
         }
 
@@ -128,6 +159,7 @@ class WSClientEndpoint(
         fun removeUpdates(exchange: String, symbol: String) {
             val map = mapOf(exchange to setOf(symbol))
             val message = ClientMessage(ClientMessageTypes.REMOVE_UPD, gson.toJson(map))
+            // TODO: optimize
             thread { session?.asyncRemote?.sendText(gson.toJson(message)) }
         }
     }

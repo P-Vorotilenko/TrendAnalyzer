@@ -2,7 +2,7 @@
     <string name="app_name">Trend Analyzer</string>
     <string name="add_symbol">Add symbol</string>
     <string name="no_symbols_observed">No symbols are currently observed</string>
-    <string name="pls_select_symbols">Please select the symbols you want to watch</string>
+    <string name="pls_select_symbols">Please select the symbols you want to observe</string>
     <string name="loading">Loading</string>
     <string name="search">Search…</string>
     <string name="logo">Logo</string>

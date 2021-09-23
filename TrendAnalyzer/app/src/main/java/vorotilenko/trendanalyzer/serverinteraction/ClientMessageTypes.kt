@@ -5,19 +5,19 @@ package vorotilenko.trendanalyzer.serverinteraction
  */
 object ClientMessageTypes {
     /**
-     * Subscribe to updates
+     * Subscribe to updates.
      */
     const val SUBSCRIBE_TO_UPD = 1
     /**
-     * Unsubscribe from all updates
+     * Unsubscribe from all updates.
      */
     const val UNSUB_FROM_ALL_UPD = 2
     /**
-     * Add updates
+     * Add updates.
      */
     const val ADD_UPD = 3
     /**
-     * Remove updates
+     * Remove updates.
      */
     const val REMOVE_UPD = 4
 }

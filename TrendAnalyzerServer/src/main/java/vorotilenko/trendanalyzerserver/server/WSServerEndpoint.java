@@ -68,7 +68,7 @@ public class WSServerEndpoint implements TradeInfoListener {
         this.session = session;
         ServerMessage message = new ServerMessage(
                 ServerMessageTypes.INFO,
-                "Connection to atserver established!"
+                "Connection to server established!"
         );
         session.getAsyncRemote().sendText(gson.toJson(message));
     }

@@ -14,26 +14,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TrendAnalyzer" >
-        <activity android:name=".activities.chart.ChartActivity">
+        <activity android:name=".MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".activities.select.currency.SelectSecondCurrencyActivity"
-            android:label="@string/select_2nd_currency"/>
-        <activity
-            android:name=".activities.select.currency.SelectFirstCurrencyActivity"
-            android:label="@string/select_1st_currency"/>
-        <activity
-            android:name=".activities.select.exchange.SelectExchangeActivity"
-            android:label="@string/select_exchange"/>
-        <activity
-            android:name=".activities.observedsymbols.ObservedSymbolsActivity"
-            android:label="@string/observed_symbols"
-            android:parentActivityName=".activities.chart.ChartActivity"/>
     </application>
 
 </manifest>

@@ -7,9 +7,11 @@
         <entry key="..\:/Soft/AndroidSDK/platforms/android-30/data/res/layout/list_menu_item_radio.xml" value="0.1" />
         <entry key="..\:/Soft/TrendAnalyzer/TrendAnalyzer/TrendAnalyzer/app/src/main/res/drawable/baseline_add_20.xml" value="0.2203125" />
         <entry key="..\:/Soft/TrendAnalyzer/TrendAnalyzer/TrendAnalyzer/app/src/main/res/drawable/baseline_list_24.xml" value="0.2203125" />
+        <entry key="..\:/Soft/TrendAnalyzer/TrendAnalyzer/TrendAnalyzer/app/src/main/res/layout-large-land/activity_chart.xml" value="0.12" />
         <entry key="..\:/Soft/TrendAnalyzer/TrendAnalyzer/TrendAnalyzer/app/src/main/res/layout/activity_chart.xml" value="0.22" />
         <entry key="..\:/Soft/TrendAnalyzer/TrendAnalyzer/TrendAnalyzer/app/src/main/res/layout/activity_choose_exchange.xml" value="0.22" />
         <entry key="..\:/Soft/TrendAnalyzer/TrendAnalyzer/TrendAnalyzer/app/src/main/res/layout/activity_choose_symbol.xml" value="0.14945652173913043" />
+        <entry key="..\:/Soft/TrendAnalyzer/TrendAnalyzer/TrendAnalyzer/app/src/main/res/layout/activity_main.xml" value="0.1068840579710145" />
         <entry key="..\:/Soft/TrendAnalyzer/TrendAnalyzer/TrendAnalyzer/app/src/main/res/layout/activity_observed_symbols.xml" value="0.25" />
         <entry key="..\:/Soft/TrendAnalyzer/TrendAnalyzer/TrendAnalyzer/app/src/main/res/layout/activity_select_currency.xml" value="0.25" />
         <entry key="..\:/Soft/TrendAnalyzer/TrendAnalyzer/TrendAnalyzer/app/src/main/res/layout/activity_select_exchange.xml" value="0.25" />
@@ -19,12 +21,23 @@
         <entry key="..\:/Soft/TrendAnalyzer/TrendAnalyzer/TrendAnalyzer/app/src/main/res/layout/currencies_list_item.xml" value="0.67" />
         <entry key="..\:/Soft/TrendAnalyzer/TrendAnalyzer/TrendAnalyzer/app/src/main/res/layout/exchange_item.xml" value="0.12409420289855072" />
         <entry key="..\:/Soft/TrendAnalyzer/TrendAnalyzer/TrendAnalyzer/app/src/main/res/layout/exchanges_list_item.xml" value="0.5" />
+        <entry key="..\:/Soft/TrendAnalyzer/TrendAnalyzer/TrendAnalyzer/app/src/main/res/layout/fragment_chart.xml" value="0.18" />
+        <entry key="..\:/Soft/TrendAnalyzer/TrendAnalyzer/TrendAnalyzer/app/src/main/res/layout/fragment_observed_symbols.xml" value="0.11684782608695653" />
+        <entry key="..\:/Soft/TrendAnalyzer/TrendAnalyzer/TrendAnalyzer/app/src/main/res/layout/fragment_select_exchange.xml" value="0.13903985507246377" />
+        <entry key="..\:/Soft/TrendAnalyzer/TrendAnalyzer/TrendAnalyzer/app/src/main/res/layout/fragment_select_first_currency.xml" value="0.13903985507246377" />
+        <entry key="..\:/Soft/TrendAnalyzer/TrendAnalyzer/TrendAnalyzer/app/src/main/res/layout/fragment_select_second_currency.xml" value="0.1" />
         <entry key="..\:/Soft/TrendAnalyzer/TrendAnalyzer/TrendAnalyzer/app/src/main/res/layout/observed_list_item.xml" value="0.5" />
         <entry key="..\:/Soft/TrendAnalyzer/TrendAnalyzer/TrendAnalyzer/app/src/main/res/layout/select_list_item.xml" value="0.33" />
+        <entry key="..\:/Soft/TrendAnalyzer/TrendAnalyzer/TrendAnalyzer/app/src/main/res/layout/test_layout.xml" value="0.13722826086956522" />
         <entry key="..\:/Soft/TrendAnalyzer/TrendAnalyzer/TrendAnalyzer/app/src/main/res/layout/toolbar.xml" value="0.1" />
         <entry key="..\:/Soft/TrendAnalyzer/TrendAnalyzer/TrendAnalyzer/app/src/main/res/menu/menu_observed_symbols.xml" value="0.33" />
       </map>
     </option>
+  </component>
+  <component name="EntryPointsManager">
+    <list size="1">
+      <item index="0" class="java.lang.String" itemvalue="androidx.lifecycle.OnLifecycleEvent" />
+    </list>
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />

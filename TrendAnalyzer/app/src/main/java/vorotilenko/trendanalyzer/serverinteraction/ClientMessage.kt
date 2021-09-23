@@ -5,11 +5,11 @@ package vorotilenko.trendanalyzer.serverinteraction
  */
 data class ClientMessage(
     /**
-     * One of the [ClientMessageTypes]
+     * One of the [ClientMessageTypes].
      */
     val messageType: Int,
     /**
-     * JSON-encoded message wrapped in the [ClientMessage]
+     * JSON-encoded message wrapped in the [ClientMessage].
      */
     val message: String
 )

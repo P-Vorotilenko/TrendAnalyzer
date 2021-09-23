@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/chartFragment">
+    <fragment
+        android:id="@+id/chartFragment"
+        android:name="vorotilenko.trendanalyzer.fragments.chart.ChartFragment"
+        android:label="@string/observed_symbols"
+        tools:layout="@layout/fragment_chart">
+        <action
+            android:id="@+id/action_toObservedSymbols"
+            app:destination="@id/observedSymbolsFragment"
+            app:enterAnim="@anim/silde_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/silde_out" />
+    </fragment>
+    <fragment
+        android:id="@+id/observedSymbolsFragment"
+        android:name="vorotilenko.trendanalyzer.fragments.observedsymbols.ObservedSymbolsFragment"
+        android:label="@string/observed_symbols"
+        tools:layout="@layout/fragment_observed_symbols">
+        <action
+            android:id="@+id/action_toSelectExchange"
+            app:destination="@id/selectExchangeFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
+    </fragment>
+    <fragment
+        android:id="@+id/selectExchangeFragment"
+        android:name="vorotilenko.trendanalyzer.fragments.select.exchange.SelectExchangeFragment"
+        android:label="@string/select_exchange"
+        tools:layout="@layout/fragment_select_exchange">
+        <action
+            android:id="@+id/action_toSelectFirstCurrency"
+            app:destination="@id/selectFirstCurrencyFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
+    </fragment>
+    <fragment
+        android:id="@+id/selectFirstCurrencyFragment"
+        android:name="vorotilenko.trendanalyzer.fragments.select.currency.first.SelectFirstCurrencyFragment"
+        android:label="@string/select_1st_currency"
+        tools:layout="@layout/fragment_select_first_currency" >
+        <action
+            android:id="@+id/action_toSelectSecondCurency"
+            app:destination="@id/selectSecondCurrencyFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
+    </fragment>
+    <fragment
+        android:id="@+id/selectSecondCurrencyFragment"
+        android:name="vorotilenko.trendanalyzer.fragments.select.currency.second.SelectSecondCurrencyFragment"
+        android:label="@string/select_2nd_currency"
+        tools:layout="@layout/fragment_select_second_currency" >
+        <action
+            android:id="@+id/action_backToChart"
+            app:destination="@id/chartFragment"
+            app:popUpTo="@id/chartFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+</navigation>

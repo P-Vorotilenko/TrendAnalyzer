@@ -9,6 +9,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import vorotilenko.trendanalyzer.ObservedSymbol
 import vorotilenko.trendanalyzer.TradeInfo
+import vorotilenko.trendanalyzer.serverinteraction.ClientEndpointStates.LOADING
 import vorotilenko.trendanalyzer.serverinteraction.WSClientEndpoint
 import java.util.*
 import java.util.concurrent.ConcurrentLinkedQueue
@@ -70,7 +71,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
      * LiveData with the state of [WSClientEndpoint].
      */
     val serverEndpointStateData =
-        MutableLiveData<Int>().apply { value = WSClientEndpoint.STATE_LOADING }
+        MutableLiveData<Int>().apply { value = LOADING }
 
     /**
      * @return The free color from array of free colors. If all colors in array are taken, returns
